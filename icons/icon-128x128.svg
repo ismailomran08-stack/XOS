@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="19" fill="#0f1e3c"/>
+  <text x="64" y="61.44" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="800" font-size="36" fill="#ffffff" letter-spacing="-1">XOS</text>
+  <text x="64" y="80.64" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="500" font-size="12" fill="#f97316">TRIVEX</text>
+</svg>

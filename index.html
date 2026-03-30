@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>XOS — Trivex Group</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f97316">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="XOS">
+  <link rel="apple-touch-icon" href="/icons/icon-152x152.svg">
+  <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.svg">
+  <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-container">
+      <div class="login-left">
+        <div class="login-brand">
+          <div class="login-logo">
+            <span class="logo-icon"><i class="fas fa-cube"></i></span>
+            <span class="logo-text">XOS</span>
+          </div>
+          <p class="login-subtitle">Operations System by Trivex Group</p>
+        </div>
+        <div class="login-features">
+          <div class="login-feature">
+            <i class="fas fa-hard-hat"></i>
+            <div>
+              <h4>Project Management</h4>
+              <p>Track every franchise fit-out from permit to handover</p>
+            </div>
+          </div>
+          <div class="login-feature">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <div>
+              <h4>Estimates & Invoicing</h4>
+              <p>Quote, invoice, and track payments in one place</p>
+            </div>
+          </div>
+          <div class="login-feature">
+            <i class="fas fa-receipt"></i>
+            <div>
+              <h4>Receipt Capture</h4>
+              <p>Snap a photo, AI extracts the details instantly</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="login-right">
+        <div class="login-form-container">
+          <h2>Welcome back</h2>
+          <p class="login-form-subtitle">Sign in to your account</p>
+
+          <div id="login-error" class="login-error" style="display:none;"></div>
+
+          <div class="login-form">
+            <div class="form-group">
+              <label>Email address</label>
+              <input type="email" id="login-email" placeholder="you@trivexgroup.com" class="form-input" autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="login-password" placeholder="Enter your password" class="form-input" autocomplete="current-password">
+            </div>
+            <button id="login-btn" class="btn-primary btn-full" onclick="handleLogin()">Sign in</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUB BIDDING PORTAL LOGIN -->
+  <div id="bid-login-screen" class="login-screen" style="display:none;">
+    <div class="portal-login-card">
+      <div class="portal-login-header">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <span class="logo-icon" style="width:36px;height:36px;font-size:16px;"><i class="fas fa-cube"></i></span>
+          <span style="font-size:20px;font-weight:800;color:var(--navy);">Trivex Group</span>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);">Subcontractor Bid Portal</p>
+      </div>
+
+      <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px;">Submit Your Bid</h2>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Enter your email to view and bid on available packages.</p>
+
+      <div id="bid-login-error" class="login-error" style="display:none;"></div>
+
+      <div class="login-form">
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" id="bid-email" placeholder="you@company.ca" class="form-input" autocomplete="email">
+        </div>
+        <button id="bid-login-btn" class="btn-primary btn-full" onclick="handleBidLogin()">View Bid Packages</button>
+      </div>
+
+      <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--card-border);text-align:center;">
+        <p style="font-size:11px;color:var(--text-light);">Powered by XOS · Trivex Group Corp · Burlington, ON</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT PORTAL LOGIN -->
+  <div id="portal-login-screen" class="login-screen" style="display:none;">
+    <div class="portal-login-card">
+      <div class="portal-login-header">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <span class="logo-icon" style="width:36px;height:36px;font-size:16px;"><i class="fas fa-cube"></i></span>
+          <span style="font-size:20px;font-weight:800;color:var(--navy);">Trivex Group</span>
+        </div>
+        <p style="font-size:13px;color:var(--text-muted);">Client Project Portal</p>
+      </div>
+
+      <h2 style="font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px;">Welcome</h2>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Sign in to view your project progress.</p>
+
+      <div id="portal-login-error" class="login-error" style="display:none;"></div>
+
+      <div class="login-form">
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" id="portal-email" placeholder="you@company.com" class="form-input" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="portal-password" placeholder="Enter your password" class="form-input" autocomplete="current-password">
+        </div>
+        <button id="portal-login-btn" class="btn-primary btn-full" onclick="handlePortalLogin()">View My Project</button>
+      </div>
+
+      <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--card-border);text-align:center;">
+        <p style="font-size:11px;color:var(--text-light);">Powered by XOS &middot; Trivex Group Corp &middot; Burlington, ON</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP SHELL -->
+  <div id="app-shell" class="app-shell" style="display:none;">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <span class="logo-icon-sm"><i class="fas fa-cube"></i></span>
+          <span class="logo-text-sm">XOS</span>
+        </div>
+      </div>
+      <nav id="sidebar-nav" class="sidebar-nav"></nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar" id="user-avatar">OI</div>
+          <div class="user-info">
+            <span class="user-name" id="user-name">Loading...</span>
+            <span class="user-role" id="user-role-label">—</span>
+          </div>
+          <button class="btn-icon" onclick="handleLogout()" title="Sign out"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+          <div class="breadcrumb" id="breadcrumb">Dashboard</div>
+        </div>
+        <div class="topbar-right">
+          <button class="topbar-icon"><i class="fas fa-bell"></i></button>
+          <div class="topbar-company">
+            <span class="company-logo">T</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT -->
+      <div id="page-content" class="page-content"></div>
+    </main>
+
+    <!-- BOTTOM NAV (mobile only) -->
+    <nav id="bottom-nav" class="bottom-nav">
+      <button class="bottom-nav-item" onclick="navigateTo('dashboard')" data-page="dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </button>
+      <button class="bottom-nav-item" onclick="navigateTo('projects')" data-page="projects">
+        <i class="fas fa-hard-hat"></i><span>Projects</span>
+      </button>
+      <button class="bottom-nav-item" onclick="navigateTo('estimates')" data-page="estimates">
+        <i class="fas fa-file-invoice"></i><span>Estimates</span>
+      </button>
+      <button class="bottom-nav-item" onclick="navigateTo('invoices')" data-page="invoices">
+        <i class="fas fa-file-invoice-dollar"></i><span>Invoices</span>
+      </button>
+      <button class="bottom-nav-item" onclick="toggleMoreMenu()" data-page="more">
+        <i class="fas fa-ellipsis-h"></i><span>More</span>
+      </button>
+    </nav>
+
+    <!-- MORE MENU (slides up from bottom nav) -->
+    <div id="more-menu" class="more-menu" style="display:none;">
+      <div class="more-menu-backdrop" onclick="toggleMoreMenu()"></div>
+      <div class="more-menu-sheet">
+        <div class="more-menu-handle"></div>
+        <button class="more-menu-item" onclick="navigateTo('expenses'); toggleMoreMenu()"><i class="fas fa-receipt"></i> Expenses</button>
+        <button class="more-menu-item" onclick="navigateTo('subcontractors'); toggleMoreMenu()"><i class="fas fa-hard-hat"></i> Subcontractors</button>
+        <button class="more-menu-item" onclick="navigateTo('finances'); toggleMoreMenu()"><i class="fas fa-chart-pie"></i> Finances</button>
+        <button class="more-menu-item" onclick="navigateTo('rollout'); toggleMoreMenu()"><i class="fas fa-map-marked-alt"></i> Rollout</button>
+        <button class="more-menu-item" onclick="navigateTo('schedule'); toggleMoreMenu()"><i class="fas fa-calendar-alt"></i> Schedule</button>
+        <button class="more-menu-item" onclick="navigateTo('pipeline'); toggleMoreMenu()"><i class="fas fa-stream"></i> Pipeline</button>
+        <div style="border-top:1px solid var(--card-border);margin:8px 0;"></div>
+        <button class="more-menu-item" onclick="handleLogout(); toggleMoreMenu()" style="color:var(--red);"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTALL PROMPT BANNER -->
+  <div id="install-banner" class="install-banner" style="display:none;">
+    <div class="install-banner-content">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;">
+        <div style="width:36px;height:36px;background:var(--orange);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;">XOS</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;">Add XOS to your home screen</div>
+          <div id="install-instructions" style="font-size:11px;color:var(--text-muted);">Get the full app experience.</div>
+        </div>
+      </div>
+      <button id="install-btn" class="btn btn-accent btn-sm" onclick="triggerInstall()">Install</button>
+      <button class="btn-icon" onclick="dismissInstall()" style="color:var(--text-muted);"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="drawings.js"></script>
+  <script src="dashboard-widgets.js"></script>
+  <script src="signatures.js"></script>
+
+  <!-- SERVICE WORKER + INSTALL PROMPT -->
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(reg => {
+        console.log('SW registered:', reg.scope);
+      }).catch(err => console.warn('SW registration failed:', err));
+    }
+
+    // Install prompt
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      showInstallBanner('android');
+    });
+
+    function showInstallBanner(platform) {
+      if (localStorage.getItem('xos_install_dismissed')) return;
+      // Don't show if already in standalone mode
+      if (window.matchMedia('(display-mode: standalone)').matches) return;
+      if (window.navigator.standalone === true) return;
+
+      const banner = document.getElementById('install-banner');
+      const instructions = document.getElementById('install-instructions');
+      const installBtn = document.getElementById('install-btn');
+
+      if (platform === 'ios') {
+        instructions.textContent = 'Tap Share then "Add to Home Screen"';
+        installBtn.style.display = 'none';
+      }
+
+      banner.style.display = 'block';
+    }
+
+    function triggerInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(result => {
+          deferredPrompt = null;
+          document.getElementById('install-banner').style.display = 'none';
+        });
+      }
+    }
+
+    function dismissInstall() {
+      document.getElementById('install-banner').style.display = 'none';
+      localStorage.setItem('xos_install_dismissed', '1');
+    }
+
+    // iOS detection — show banner after a delay
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS && !window.navigator.standalone) {
+      setTimeout(() => showInstallBanner('ios'), 3000);
+    }
+  </script>
+</body>
+</html>
