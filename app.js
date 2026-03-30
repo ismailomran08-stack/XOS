@@ -850,7 +850,7 @@ async function handleLogin() {
     }
   }
 
-  // Demo mode fallback
+  // Demo mode fallback — check all user types
   const demoUser = DEMO_USERS[email];
   if (demoUser) {
     currentUser = { id: email, email, ...demoUser };
@@ -858,7 +858,23 @@ async function handleLogin() {
     return;
   }
 
-  errorEl.textContent = 'Invalid email or password.';
+  // Check client accounts
+  const clientUser = DEMO_CLIENTS[email];
+  if (clientUser) {
+    currentUser = { id: email, email, ...clientUser };
+    enterApp();
+    return;
+  }
+
+  // Check sub accounts
+  const subUser = DEMO_SUBS.find(s => s.email === email);
+  if (subUser) {
+    currentUser = { id: subUser.id, email: subUser.email, full_name: subUser.company, role: 'sub', avatar_initials: subUser.company.substring(0, 2).toUpperCase(), sub_id: subUser.id };
+    enterApp();
+    return;
+  }
+
+  errorEl.textContent = 'No account found with that email.';
   errorEl.style.display = 'block';
   btn.disabled = false;
   btn.textContent = 'Sign in';
@@ -926,33 +942,16 @@ async function handleLogout() {
   if (sbClient) {
     await sbClient.auth.signOut();
   }
-  const isPortal = window.location.pathname === '/portal' || window.location.hostname.startsWith('portal.');
-  const isBidPortal = window.location.pathname === '/bid' || window.location.hostname.startsWith('bid.');
   currentUser = null;
   document.getElementById('app-shell').style.display = 'none';
 
-  if (isBidPortal) {
-    document.getElementById('bid-login-screen').style.display = 'flex';
-    document.getElementById('bid-email').value = '';
-    document.getElementById('bid-login-error').style.display = 'none';
-    return;
-  }
-
-  if (isPortal) {
-    document.getElementById('portal-login-screen').style.display = 'flex';
-    document.getElementById('portal-email').value = '';
-    document.getElementById('portal-password').value = '';
-    document.getElementById('portal-login-btn').disabled = false;
-    document.getElementById('portal-login-btn').textContent = 'View My Project';
-    document.getElementById('portal-login-error').style.display = 'none';
-  } else {
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('login-email').value = '';
-    document.getElementById('login-password').value = '';
-    document.getElementById('login-btn').disabled = false;
-    document.getElementById('login-btn').textContent = 'Sign in';
-    document.getElementById('login-error').style.display = 'none';
-  }
+  // Always show the single login screen
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-btn').textContent = 'Sign in';
+  document.getElementById('login-error').style.display = 'none';
 }
 
 // ============================================
@@ -1392,36 +1391,14 @@ function downloadApprovedEstimate(projectId, bpId, subId) {
 document.addEventListener('DOMContentLoaded', () => {
   initSupabase();
 
-  const isPortal = window.location.pathname === '/portal' || window.location.hostname.startsWith('portal.');
-  const isBidPortal = window.location.pathname === '/bid' || window.location.hostname.startsWith('bid.');
-
-  if (isBidPortal) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('bid-login-screen').style.display = 'flex';
-    document.title = 'Trivex Group — Sub Bid Portal';
-    document.getElementById('bid-email').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleBidLogin();
-    });
-  } else if (isPortal) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('portal-login-screen').style.display = 'flex';
-    document.title = 'Trivex Group — Client Portal';
-
-    document.getElementById('portal-password').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handlePortalLogin();
-    });
-    document.getElementById('portal-email').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('portal-password').focus();
-    });
-  } else {
-    // Internal login
-    document.getElementById('login-password').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleLogin();
-    });
-    document.getElementById('login-email').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('login-password').focus();
-    });
-  }
+  // Single login — email determines role
+  document.title = 'Trivex Group — Portal';
+  document.getElementById('login-password').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleLogin();
+  });
+  document.getElementById('login-email').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('login-password').focus();
+  });
 
   // Check for existing Supabase session
   if (sbClient) {
@@ -1444,10 +1421,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function enterApp() {
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('portal-login-screen').style.display = 'none';
+  const portalScreen = document.getElementById('portal-login-screen');
+  if (portalScreen) portalScreen.style.display = 'none';
+  const bidScreen = document.getElementById('bid-login-screen');
+  if (bidScreen) bidScreen.style.display = 'none';
   document.getElementById('app-shell').style.display = 'flex';
 
   const isClient = currentUser.role === 'client';
+  const isSub = currentUser.role === 'sub';
 
   // Set the project context for clients
   if (isClient) {
@@ -1458,22 +1439,29 @@ function enterApp() {
   // Set user info in sidebar
   document.getElementById('user-avatar').textContent = currentUser.avatar_initials || '??';
   document.getElementById('user-name').textContent = currentUser.full_name;
-  document.getElementById('user-role-label').textContent = isClient ? 'Client' : currentUser.role;
+  document.getElementById('user-role-label').textContent = isClient ? 'Client' : isSub ? 'Subcontractor' : currentUser.role;
 
-  // Build sidebar — client gets their own nav
-  document.getElementById('sidebar').style.display = 'flex';
-  if (isClient) {
-    buildClientSidebar();
+  // Build sidebar based on role
+  if (isSub) {
+    document.getElementById('sidebar').style.display = 'none';
   } else {
-    buildSidebar();
+    document.getElementById('sidebar').style.display = 'flex';
+    if (isClient) {
+      buildClientSidebar();
+    } else {
+      buildSidebar();
+    }
   }
 
   // Show/hide bottom nav
   const bottomNav = document.getElementById('bottom-nav');
-  if (bottomNav) bottomNav.style.display = isClient ? 'none' : '';
+  if (bottomNav) bottomNav.style.display = (isClient || isSub) ? 'none' : '';
 
   // Route to correct default page based on role
-  if (isClient) {
+  if (isSub) {
+    renderBidPortal();
+    return;
+  } else if (isClient) {
     navigateTo('client-portal');
   } else {
     navigateTo('dashboard');
