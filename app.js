@@ -926,8 +926,8 @@ async function handleLogout() {
   if (sbClient) {
     await sbClient.auth.signOut();
   }
-  const isPortal = window.location.pathname === '/portal';
-  const isBidPortal = window.location.pathname === '/bid';
+  const isPortal = window.location.pathname === '/portal' || window.location.hostname.startsWith('portal.');
+  const isBidPortal = window.location.pathname === '/bid' || window.location.hostname.startsWith('bid.');
   currentUser = null;
   document.getElementById('app-shell').style.display = 'none';
 
@@ -1392,8 +1392,8 @@ function downloadApprovedEstimate(projectId, bpId, subId) {
 document.addEventListener('DOMContentLoaded', () => {
   initSupabase();
 
-  const isPortal = window.location.pathname === '/portal';
-  const isBidPortal = window.location.pathname === '/bid';
+  const isPortal = window.location.pathname === '/portal' || window.location.hostname.startsWith('portal.');
+  const isBidPortal = window.location.pathname === '/bid' || window.location.hostname.startsWith('bid.');
 
   if (isBidPortal) {
     document.getElementById('login-screen').style.display = 'none';
