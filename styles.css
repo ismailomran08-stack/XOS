@@ -722,16 +722,17 @@ textarea.form-input-styled { resize: vertical; min-height: 80px; }
 }
 .bottom-nav-item {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px;
+  gap: 2px;
   background: none; border: none;
   color: var(--text-muted);
-  font-size: 10px; font-weight: 500;
-  padding: 6px 12px;
+  font-size: 9px; font-weight: 500;
+  padding: 4px 8px;
   cursor: pointer;
-  min-width: 56px;
+  min-width: 48px;
   min-height: 44px;
   transition: var(--transition);
   border-radius: 8px;
+  flex: 1;
 }
 .bottom-nav-item i { font-size: 18px; }
 .bottom-nav-item.active { color: var(--orange); }
@@ -816,41 +817,71 @@ textarea.form-input-styled { resize: vertical; min-height: 80px; }
   .menu-toggle { display: block; }
   .bottom-nav { display: flex; }
 
-  /* Page content needs bottom padding for bottom nav */
-  .page-content { padding: 16px 16px 80px; }
-  .page-header { flex-direction: column; }
-  .page-header h1 { font-size: 18px; }
+  /* Page content */
+  .page-content { padding: 12px 12px 80px; }
+  .page-header { flex-direction: column; gap: 8px; }
+  .page-header h1 { font-size: 17px; }
+  .page-header-sub { font-size: 12px; }
 
-  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  /* Dashboard grid — force 2 columns on mobile */
+  #dashboard-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  #dashboard-grid > .stat-card {
+    grid-column: span 1 !important;
+  }
+  /* Wide widgets span full width on mobile */
+  #dashboard-grid > .stat-card[style*="span 6"],
+  #dashboard-grid > .stat-card[style*="span 7"],
+  #dashboard-grid > .stat-card[style*="span 8"],
+  #dashboard-grid > .stat-card[style*="span 9"],
+  #dashboard-grid > .stat-card[style*="span 10"],
+  #dashboard-grid > .stat-card[style*="span 11"],
+  #dashboard-grid > .stat-card[style*="span 12"] {
+    grid-column: span 2 !important;
+  }
+
+  /* Stat cards — compact */
+  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+  .stat-card { padding: 14px; }
+  .stat-card-value { font-size: 18px; }
+  .stat-card-label { font-size: 11px; }
+  .stat-card-change { font-size: 10px; }
+  .stat-card-icon { width: 30px; height: 30px; font-size: 12px; }
+  .section-title { font-size: 13px; }
+
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
   .cards-grid { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr; }
 
   .login-container { flex-direction: column; }
-  .login-left { padding: 32px 24px; }
-  .login-right { padding: 32px 24px; }
+  .login-left { padding: 24px 20px; }
+  .login-right { padding: 24px 20px; }
   .login-features { display: none; }
+  .logo-text { font-size: 22px; }
 
   /* Tables scroll horizontally */
   .data-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .data-table { font-size: 12px; min-width: 500px; }
-  .data-table th, .data-table td { padding: 8px 10px; white-space: nowrap; }
+  .data-table { font-size: 11px; min-width: 400px; }
+  .data-table th, .data-table td { padding: 6px 8px; white-space: nowrap; }
+  .data-table-title { font-size: 13px; }
 
   .tabs { gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .tab { padding: 8px 12px; font-size: 12px; flex-shrink: 0; }
+  .tab { padding: 8px 10px; font-size: 11px; flex-shrink: 0; }
 
   .pipeline-board { flex-direction: column; }
   .pipeline-column { min-width: unset; }
 
-  /* Ensure all tap targets are 44px+ */
-  .btn, .btn-sm { min-height: 44px; }
-  .nav-item { min-height: 44px; }
-  .tab { min-height: 44px; display: flex; align-items: center; }
-  .form-input, .form-input-styled { min-height: 44px; }
-  select.form-input-styled { min-height: 44px; }
+  /* Tap targets */
+  .btn, .btn-sm { min-height: 40px; font-size: 12px; }
+  .nav-item { min-height: 40px; font-size: 12px; }
+  .tab { min-height: 40px; display: flex; align-items: center; }
+  .form-input, .form-input-styled { min-height: 40px; font-size: 13px; }
+  select.form-input-styled { min-height: 40px; }
 
   /* Receipt capture button full-width */
-  .receipt-capture-btn { padding: 20px; font-size: 16px; }
+  .receipt-capture-btn { padding: 16px; font-size: 15px; }
 
   /* Install banner above bottom nav */
   .install-banner { bottom: 64px; }
@@ -860,11 +891,16 @@ textarea.form-input-styled { resize: vertical; min-height: 80px; }
 }
 
 @media (max-width: 480px) {
-  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .stat-card { padding: 14px; }
-  .stat-card-value { font-size: 20px; }
-  .page-content { padding: 12px 12px 80px; }
-  .topbar { padding: 0 12px; }
+  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 6px; }
+  .stat-card { padding: 12px; }
+  .stat-card-value { font-size: 16px; }
+  .stat-card-label { font-size: 10px; }
+  .stat-card-icon { width: 26px; height: 26px; font-size: 11px; }
+  .page-content { padding: 10px 10px 80px; }
+  .page-header h1 { font-size: 16px; }
+  .topbar { padding: 0 10px; }
+  .section-title { font-size: 12px; }
+  #dashboard-grid { gap: 8px !important; }
 }
 
 /* Standalone mode (installed PWA) — hide install banner */

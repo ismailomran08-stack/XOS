@@ -306,11 +306,11 @@ function clickableWidget(page, content) {
 }
 
 function miniStatWidget(label, value, sub, icon, color) {
-  return '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
-    '<div><div style="font-size:12px;color:var(--text-muted);font-weight:500;margin-bottom:6px;">' + label + '</div>' +
-    '<div style="font-size:24px;font-weight:700;color:var(--navy);">' + value + '</div>' +
-    (sub ? '<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">' + sub + '</div>' : '') + '</div>' +
-    '<div style="width:36px;height:36px;border-radius:10px;background:' + color + '15;display:flex;align-items:center;justify-content:center;"><i class="' + icon + '" style="color:' + color + ';font-size:15px;"></i></div>' +
+  return '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;overflow:hidden;">' +
+    '<div style="min-width:0;flex:1;"><div style="font-size:11px;color:var(--text-muted);font-weight:500;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + label + '</div>' +
+    '<div style="font-size:20px;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + value + '</div>' +
+    (sub ? '<div style="font-size:10px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + sub + '</div>' : '') + '</div>' +
+    '<div style="width:32px;height:32px;border-radius:8px;background:' + color + '15;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="' + icon + '" style="color:' + color + ';font-size:13px;"></i></div>' +
   '</div>';
 }
 
@@ -340,8 +340,8 @@ function renderCustomDashboard() {
       'data-idx="' + idx + '">';
 
     // Widget header
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">';
-    html += '<div class="section-title" style="margin:0;font-size:13px;">' + title + '</div>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:4px;">';
+    html += '<div class="section-title" style="margin:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;">' + title + '</div>';
     html += '<div style="display:flex;gap:4px;">';
     if (_dashboardEditMode) {
       if (w.type === 'project-spotlight') {
