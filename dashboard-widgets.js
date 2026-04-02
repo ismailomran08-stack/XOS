@@ -324,9 +324,36 @@ function renderCustomDashboard() {
       (_dashboardEditMode ? '<button class="btn btn-outline btn-sm" onclick="addWidgetModal()"><i class="fas fa-plus"></i> Add Widget</button><button class="btn btn-outline btn-sm" onclick="resetDashboardLayout()"><i class="fas fa-undo"></i> Reset</button>' : '') +
     '</div></div>';
 
+  // Separate stat widgets from content widgets for mobile layout
+  var statWidgets = [];
+  var contentWidgets = [];
+  layout.forEach(function(w, idx) {
+    if (w.type.startsWith('stat-')) statWidgets.push({ w: w, idx: idx });
+    else contentWidgets.push({ w: w, idx: idx });
+  });
+
+  // Stat cards as horizontal scroll strip
+  if (statWidgets.length > 0) {
+    html += '<div class="stats-grid" style="margin-bottom:16px;">';
+    statWidgets.forEach(function(item) {
+      var w = item.w;
+      var idx = item.idx;
+      html += '<div class="stat-card" style="cursor:pointer;" data-idx="' + idx + '">';
+      if (_dashboardEditMode) {
+        html += '<button onclick="event.stopPropagation();removeWidget(' + idx + ')" style="position:absolute;top:4px;right:4px;padding:2px 5px;font-size:9px;border:1px solid rgba(224,82,82,0.3);border-radius:4px;background:rgba(224,82,82,0.1);color:var(--red);cursor:pointer;z-index:2;"><i class="fas fa-times"></i></button>';
+      }
+      html += renderWidgetContent(w);
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Content widgets as grid (stacks on mobile via CSS)
   html += '<div id="dashboard-grid" style="display:grid;grid-template-columns:repeat(12,1fr);gap:16px;">';
 
-  layout.forEach(function(w, idx) {
+  contentWidgets.forEach(function(item) {
+    var w = item.w;
+    var idx = item.idx;
     var cat = WIDGET_CATALOG.find(function(c) { return c.type === w.type; });
     // Support both old size format and new colSpan
     var colSpan = w.colSpan || parseInt(WIDGET_SIZES[w.size]) || 3;
