@@ -32,104 +32,46 @@ const DEMO_USERS = {
 
 // Client users — each linked to a specific project
 const DEMO_CLIENTS = {
-  'ops@tdlgroup.com':      { full_name: 'TDL Group',       role: 'client', avatar_initials: 'TH', project_id: '1', brand: 'TDL Group' },
-  'dev@subwaycanada.com':   { full_name: 'Subway Canada',   role: 'client', avatar_initials: 'SW', project_id: '2', brand: 'Subway Canada' },
-  'projects@mcdonalds.ca':  { full_name: "McDonald's Corp", role: 'client', avatar_initials: 'MC', project_id: '3', brand: "McDonald's Corp" },
-  'build@plkcanada.com':    { full_name: 'PLK Canada',      role: 'client', avatar_initials: 'PL', project_id: '5', brand: 'PLK Canada' },
-  'expand@recipeunltd.com': { full_name: 'Recipe Unlimited', role: 'client', avatar_initials: 'RU', project_id: '6', brand: 'Recipe Unlimited' },
-  'dev@jerseymikes.ca':     { full_name: 'Jersey Mikes',    role: 'client', avatar_initials: 'JM', project_id: '7', brand: 'Jersey Mikes' },
+  'client@test.com': { full_name: '[TEST] Recipe Unlimited', role: 'client', avatar_initials: 'RU', project_id: '1', brand: 'Recipe Unlimited' },
 };
 
 // Demo project data
 const DEMO_PROJECTS = [
-  { id: '1', name: "Tim Hortons — Brampton",    client_brand: 'TDL Group',       status: 'active',     completion_pct: 72, target_handover: '2026-04-30', budget: 380000, city: 'Brampton, ON',    assigned: ['saud@trivexgroup.com'] },
-  { id: '2', name: "Subway — Mississauga",       client_brand: 'Subway Canada',   status: 'active',     completion_pct: 45, target_handover: '2026-06-15', budget: 290000, city: 'Mississauga, ON', assigned: ['saud@trivexgroup.com'] },
-  { id: '3', name: "McDonald's — Hamilton",       client_brand: "McDonald's Corp", status: 'planning',   completion_pct: 28, target_handover: '2026-08-01', budget: 520000, city: 'Hamilton, ON',    assigned: [] },
-  { id: '4', name: "Pizza Pizza — Oshawa",        client_brand: 'Pizza Pizza Ltd', status: 'planning',   completion_pct: 15, target_handover: '2026-09-01', budget: 210000, city: 'Oshawa, ON',      assigned: [] },
-  { id: '5', name: "Popeyes — Scarborough",       client_brand: 'PLK Canada',      status: 'punch_list', completion_pct: 90, target_handover: '2026-03-30', budget: 340000, city: 'Scarborough, ON', assigned: ['saud@trivexgroup.com'] },
-  { id: '6', name: "Harvey's — Burlington",       client_brand: 'Recipe Unlimited', status: 'active',    completion_pct: 60, target_handover: '2026-05-15', budget: 310000, city: 'Burlington, ON',  assigned: ['saud@trivexgroup.com'] },
-  { id: '7', name: "Jersey Mike's — Oakville",    client_brand: 'Jersey Mikes',    status: 'planning',   completion_pct: 10, target_handover: '2026-10-01', budget: 270000, city: 'Oakville, ON',    assigned: [] },
-  { id: '8', name: "Harvey's — Kitchener",        client_brand: 'Recipe Unlimited', status: 'planning',  completion_pct: 0,  target_handover: '2026-11-01', budget: 295000, city: 'Kitchener, ON',   assigned: [] },
-  { id: '9', name: "Harvey's — Barrie",            client_brand: 'Recipe Unlimited', status: 'planning',  completion_pct: 0,  target_handover: '2026-12-01', budget: 305000, city: 'Barrie, ON',      assigned: [] },
-  { id: '10', name: "Jersey Mike's — Whitby",      client_brand: 'Jersey Mikes',    status: 'planning',   completion_pct: 0,  target_handover: '2026-11-15', budget: 260000, city: 'Whitby, ON',     assigned: [] },
+  { id: '1', name: "[TEST] Harvey's — Burlington",  client_brand: 'Recipe Unlimited', status: 'active', completion_pct: 60, target_handover: '2026-06-15', budget: 310000, city: 'Burlington, ON', assigned: ['saud@trivexgroup.com', 'omran@trivexgroup.com', 'alex@trivexgroup.com'] },
 ];
 
 const DEMO_EXPENSES = [
-  { id: '1', project_id: '1', vendor: 'Home Depot', amount: 2340.50, category: 'Materials', expense_date: '2026-03-15', submitted_by: 'saud@trivexgroup.com' },
-  { id: '2', project_id: '1', vendor: 'Santos Electrical', amount: 8500.00, category: 'Subcontractor', expense_date: '2026-03-12', submitted_by: 'saud@trivexgroup.com' },
-  { id: '3', project_id: '2', vendor: 'Rona', amount: 1875.25, category: 'Materials', expense_date: '2026-03-18', submitted_by: 'saud@trivexgroup.com' },
-  { id: '4', project_id: '5', vendor: 'City of Toronto', amount: 450.00, category: 'Permits', expense_date: '2026-03-10', submitted_by: 'omran@trivexgroup.com' },
-  { id: '5', project_id: '6', vendor: 'GTA Drywall Inc.', amount: 6200.00, category: 'Subcontractor', expense_date: '2026-03-20', submitted_by: 'saud@trivexgroup.com' },
+  { id: '1', project_id: '1', vendor: '[TEST] Home Depot — Lumber', amount: 4250.00, category: 'Materials', expense_date: '2026-03-20', submitted_by: 'saud@trivexgroup.com' },
+  { id: '2', project_id: '1', vendor: '[TEST] Santos Electrical', amount: 8500.00, category: 'Subcontractor', expense_date: '2026-03-15', submitted_by: 'omran@trivexgroup.com' },
+  { id: '3', project_id: '1', vendor: '[TEST] City of Burlington — Permit', amount: 650.00, category: 'Permits', expense_date: '2026-03-10', submitted_by: 'omran@trivexgroup.com' },
+  { id: '4', project_id: 'trivex-corp', vendor: '[TEST] Bell Canada — Office Internet', amount: 189.99, category: 'Other', expense_date: '2026-03-01', submitted_by: 'omran@trivexgroup.com' },
 ];
 
 const DEMO_INVOICES = [
-  { id: '1', invoice_number: 'INV-2026-001', project_id: '1', stage: 'deposit', amount: 114000, amount_paid: 114000, status: 'paid', issue_date: '2026-01-20', due_date: '2026-03-01',
-    payments: [{ amount: 114000, date: '2026-02-25', method: 'Wire Transfer' }] },
-  { id: '2', invoice_number: 'INV-2026-002', project_id: '1', stage: 'progress', amount: 152000, amount_paid: 80000, status: 'partially_paid', issue_date: '2026-03-01', due_date: '2026-03-15',
-    payments: [{ amount: 80000, date: '2026-03-12', method: 'Cheque' }] },
-  { id: '3', invoice_number: 'INV-2026-003', project_id: '2', stage: 'deposit', amount: 87000, amount_paid: 87000, status: 'paid', issue_date: '2026-02-05', due_date: '2026-02-28',
-    payments: [{ amount: 87000, date: '2026-02-26', method: 'Wire Transfer' }] },
-  { id: '4', invoice_number: 'INV-2026-004', project_id: '2', stage: 'progress', amount: 116000, amount_paid: 0, status: 'sent', issue_date: '2026-03-18', due_date: '2026-04-01',
-    payments: [] },
-  { id: '5', invoice_number: 'INV-2026-005', project_id: '5', stage: 'final', amount: 102000, amount_paid: 0, status: 'sent', issue_date: '2026-03-20', due_date: '2026-03-25',
-    payments: [] },
-  { id: '6', invoice_number: 'INV-2026-006', project_id: '6', stage: 'deposit', amount: 93000, amount_paid: 93000, status: 'paid', issue_date: '2026-02-15', due_date: '2026-03-10',
+  { id: '1', invoice_number: '[TEST] INV-2026-001', project_id: '1', stage: 'deposit', amount: 93000, amount_paid: 93000, status: 'paid', issue_date: '2026-02-15', due_date: '2026-03-10',
     payments: [{ amount: 93000, date: '2026-03-08', method: 'E-Transfer' }] },
+  { id: '2', invoice_number: '[TEST] INV-2026-002', project_id: '1', stage: 'progress', amount: 124000, amount_paid: 60000, status: 'partially_paid', issue_date: '2026-03-15', due_date: '2026-04-15',
+    payments: [{ amount: 60000, date: '2026-03-28', method: 'Wire Transfer' }] },
 ];
 
 const ESTIMATE_CATEGORIES = ['Demo', 'Rough-in', 'MEP', 'Framing', 'Drywall', 'Finishes', 'Fixtures', 'Project Management', 'Contingency'];
 
 const DEMO_ESTIMATES = [
   {
-    id: 'est-1', client_name: 'Jersey Mikes', project_type: 'Franchise Fit-Out', status: 'draft',
-    sqft: 1800, address: '234 Lakeshore Rd E, Oakville, ON', target_start: '2026-06-01', margin_pct: 18,
-    created_at: '2026-03-20',
+    id: 'est-1', client_name: '[TEST] Recipe Unlimited', project_type: 'Franchise Fit-Out', status: 'accepted',
+    sqft: 2400, address: '123 Brant St, Burlington, ON', target_start: '2026-03-01', margin_pct: 16,
+    created_at: '2026-02-10',
     items: [
-      { id: 'li-1', description: 'Selective demolition of existing interior', category: 'Demo', qty: 1, unit: 'lot', unit_cost: 8500 },
-      { id: 'li-2', description: 'Electrical rough-in — panels, circuits, outlets', category: 'Rough-in', qty: 1, unit: 'lot', unit_cost: 22000 },
-      { id: 'li-3', description: 'Plumbing rough-in — grease trap, drains, water lines', category: 'MEP', qty: 1, unit: 'lot', unit_cost: 18000 },
-      { id: 'li-4', description: 'HVAC — RTU, ductwork, makeup air', category: 'MEP', qty: 1, unit: 'lot', unit_cost: 28000 },
-      { id: 'li-5', description: 'Steel stud framing — walls, soffits, bulkheads', category: 'Framing', qty: 1800, unit: 'sqft', unit_cost: 8.50 },
-      { id: 'li-6', description: 'Drywall, taping, sanding, primer', category: 'Drywall', qty: 1800, unit: 'sqft', unit_cost: 7.00 },
-      { id: 'li-7', description: 'Floor tile — porcelain, installed', category: 'Finishes', qty: 1200, unit: 'sqft', unit_cost: 12.00 },
-      { id: 'li-8', description: 'Painting — 2 coats, brand colours', category: 'Finishes', qty: 1800, unit: 'sqft', unit_cost: 3.50 },
-      { id: 'li-9', description: 'Millwork — service counter, back counter, shelving', category: 'Fixtures', qty: 1, unit: 'lot', unit_cost: 24000 },
-      { id: 'li-10', description: 'Project management — 12 weeks', category: 'Project Management', qty: 12, unit: 'week', unit_cost: 2500 },
-      { id: 'li-11', description: 'Contingency allowance (5%)', category: 'Contingency', qty: 1, unit: 'lot', unit_cost: 9000 },
-    ],
-  },
-  {
-    id: 'est-2', client_name: 'Dairy Queen', project_type: 'Franchise Fit-Out', status: 'sent',
-    sqft: 2200, address: '55 Bayfield St, Barrie, ON', target_start: '2026-07-15', margin_pct: 15,
-    created_at: '2026-03-15',
-    items: [
-      { id: 'li-20', description: 'Full interior demolition', category: 'Demo', qty: 1, unit: 'lot', unit_cost: 12000 },
-      { id: 'li-21', description: 'Electrical — full service, drive-thru', category: 'Rough-in', qty: 1, unit: 'lot', unit_cost: 28000 },
-      { id: 'li-22', description: 'Plumbing — kitchen, washrooms, drive-thru', category: 'MEP', qty: 1, unit: 'lot', unit_cost: 22000 },
-      { id: 'li-23', description: 'HVAC system — complete', category: 'MEP', qty: 1, unit: 'lot', unit_cost: 35000 },
-      { id: 'li-24', description: 'Framing', category: 'Framing', qty: 2200, unit: 'sqft', unit_cost: 9.00 },
-      { id: 'li-25', description: 'Drywall & taping', category: 'Drywall', qty: 2200, unit: 'sqft', unit_cost: 7.50 },
-      { id: 'li-26', description: 'Finishes — tile, paint, ceiling', category: 'Finishes', qty: 1, unit: 'lot', unit_cost: 32000 },
-      { id: 'li-27', description: 'Equipment install + millwork', category: 'Fixtures', qty: 1, unit: 'lot', unit_cost: 38000 },
-      { id: 'li-28', description: 'Project management — 14 weeks', category: 'Project Management', qty: 14, unit: 'week', unit_cost: 2500 },
-      { id: 'li-29', description: 'Contingency (5%)', category: 'Contingency', qty: 1, unit: 'lot', unit_cost: 12000 },
-    ],
-  },
-  {
-    id: 'est-3', client_name: "Wendy's Intl", project_type: 'Franchise Fit-Out', status: 'accepted',
-    sqft: 2600, address: '400 Wellington Rd S, London, ON', target_start: '2026-04-01', margin_pct: 16,
-    created_at: '2026-02-28',
-    items: [
-      { id: 'li-30', description: 'Demolition', category: 'Demo', qty: 1, unit: 'lot', unit_cost: 14000 },
-      { id: 'li-31', description: 'Electrical rough-in', category: 'Rough-in', qty: 1, unit: 'lot', unit_cost: 30000 },
-      { id: 'li-32', description: 'Plumbing + grease trap', category: 'MEP', qty: 1, unit: 'lot', unit_cost: 24000 },
-      { id: 'li-33', description: 'HVAC — full system', category: 'MEP', qty: 1, unit: 'lot', unit_cost: 40000 },
-      { id: 'li-34', description: 'Framing', category: 'Framing', qty: 2600, unit: 'sqft', unit_cost: 8.75 },
-      { id: 'li-35', description: 'Drywall', category: 'Drywall', qty: 2600, unit: 'sqft', unit_cost: 7.25 },
-      { id: 'li-36', description: 'Finishes package', category: 'Finishes', qty: 1, unit: 'lot', unit_cost: 38000 },
-      { id: 'li-37', description: 'Fixtures + equipment install', category: 'Fixtures', qty: 1, unit: 'lot', unit_cost: 42000 },
-      { id: 'li-38', description: 'PM — 16 weeks', category: 'Project Management', qty: 16, unit: 'week', unit_cost: 2800 },
-      { id: 'li-39', description: 'Contingency', category: 'Contingency', qty: 1, unit: 'lot', unit_cost: 14000 },
+      { id: 'li-1', description: 'Selective demolition', category: 'Demo', qty: 1, unit: 'lot', unit_cost: 9500 },
+      { id: 'li-2', description: 'Electrical rough-in', category: 'Rough-in', qty: 1, unit: 'lot', unit_cost: 24000 },
+      { id: 'li-3', description: 'Plumbing — grease trap + drains', category: 'MEP', qty: 1, unit: 'lot', unit_cost: 20000 },
+      { id: 'li-4', description: 'HVAC — RTU + ductwork', category: 'MEP', qty: 1, unit: 'lot', unit_cost: 30000 },
+      { id: 'li-5', description: 'Framing', category: 'Framing', qty: 2400, unit: 'sqft', unit_cost: 8.50 },
+      { id: 'li-6', description: 'Drywall + taping', category: 'Drywall', qty: 2400, unit: 'sqft', unit_cost: 7.00 },
+      { id: 'li-7', description: 'Finishes — tile, paint, ceiling', category: 'Finishes', qty: 1, unit: 'lot', unit_cost: 28000 },
+      { id: 'li-8', description: 'Fixtures + equipment install', category: 'Fixtures', qty: 1, unit: 'lot', unit_cost: 32000 },
+      { id: 'li-9', description: 'Project management — 12 weeks', category: 'Project Management', qty: 12, unit: 'week', unit_cost: 2500 },
+      { id: 'li-10', description: 'Contingency (5%)', category: 'Contingency', qty: 1, unit: 'lot', unit_cost: 10000 },
     ],
   },
 ];
@@ -181,16 +123,7 @@ function generateMilestones(projectId, completedCount, startDate) {
 }
 
 // Init milestones for each project (completedCount based on completion_pct)
-DEMO_MILESTONES['1'] = generateMilestones('1', 7, '2026-01-15'); // Tim Hortons 72%
-DEMO_MILESTONES['2'] = generateMilestones('2', 4, '2026-02-01'); // Subway 45%
-DEMO_MILESTONES['3'] = generateMilestones('3', 2, '2026-03-01'); // McD 28%
-DEMO_MILESTONES['4'] = generateMilestones('4', 1, '2026-04-01'); // Pizza Pizza 15%
-DEMO_MILESTONES['5'] = generateMilestones('5', 9, '2025-12-01'); // Popeyes 90%
-DEMO_MILESTONES['6'] = generateMilestones('6', 6, '2026-01-20'); // Harvey's 60%
-DEMO_MILESTONES['7'] = generateMilestones('7', 1, '2026-05-01'); // Jersey Mike's 10%
-DEMO_MILESTONES['8'] = generateMilestones('8', 0, '2026-06-01'); // Harvey's Kitchener 0%
-DEMO_MILESTONES['9'] = generateMilestones('9', 0, '2026-07-01'); // Harvey's Barrie 0%
-DEMO_MILESTONES['10'] = generateMilestones('10', 0, '2026-06-15'); // Jersey Mike's Whitby 0%
+DEMO_MILESTONES['1'] = generateMilestones('1', 6, '2026-02-01'); // [TEST] Harvey's 60%
 
 // Recalculate completion_pct from milestones
 DEMO_PROJECTS.forEach(p => {
@@ -204,14 +137,8 @@ DEMO_PROJECTS.forEach(p => {
 // Demo notes per project
 const DEMO_NOTES = {
   '1': [
-    { id: 'n1', text: 'Client requested upgraded countertops — confirmed marble. Extra $4,200 approved.', author: 'Omran Ismail', date: '2026-03-20' },
-    { id: 'n2', text: 'Electrical rough-in passed inspection. Moving to drywall next week.', author: 'Saud', date: '2026-03-18' },
-  ],
-  '2': [
-    { id: 'n3', text: 'Subway corporate sent updated signage specs. Forwarded to sign vendor.', author: 'Alex', date: '2026-03-22' },
-  ],
-  '5': [
-    { id: 'n4', text: 'Punch list walkthrough scheduled for March 28. Client will attend.', author: 'Omran Ismail', date: '2026-03-25' },
+    { id: 'n1', text: '[TEST] Client approved marble countertop upgrade. Extra $4,200 confirmed.', author: 'Omran Ismail', date: '2026-03-20' },
+    { id: 'n2', text: '[TEST] Framing inspection passed. Drywall starting next week.', author: 'Saud', date: '2026-03-18' },
   ],
 };
 
@@ -222,12 +149,8 @@ const DEMO_CLIENT_MESSAGES = {
   '1': [
     { id: 'msg-1', sender: 'Omran Ismail', role: 'trivex', message: 'Hi team, drywall is complete and taping starts Monday. On track for April 30 handover.', date: '2026-03-22 10:30 AM', category: 'Milestone', read_by_client: true, read_by_trivex: true },
     { id: 'msg-2', sender: 'TDL Group', role: 'client', message: 'Thanks Omran. Can we get updated photos of the dining area?', date: '2026-03-22 2:15 PM', category: 'General', read_by_client: true, read_by_trivex: true },
-    { id: 'msg-3', sender: 'Omran Ismail', role: 'trivex', message: 'Absolutely, Saud will take photos tomorrow and upload them here.', date: '2026-03-22 3:00 PM', category: 'General', read_by_client: true, read_by_trivex: true },
-    { id: 'msg-4', sender: 'TDL Group', role: 'client', message: 'We need the grease trap moved before the health inspector visit on April 5th. This is urgent.', date: '2026-03-26 9:00 AM', category: 'Urgent', read_by_client: true, read_by_trivex: false },
-  ],
-  '5': [
-    { id: 'msg-5', sender: 'Omran Ismail', role: 'trivex', message: 'Punch list items identified: 3 minor touch-ups, signage alignment, parking lot striping. Targeting completion by March 30.', date: '2026-03-25 9:00 AM', category: 'Milestone', read_by_client: true, read_by_trivex: true },
-    { id: 'msg-6', sender: 'PLK Canada', role: 'client', message: 'Sounds good. We will have our ops team do a final walkthrough on the 28th.', date: '2026-03-25 11:30 AM', category: 'General', read_by_client: true, read_by_trivex: false },
+    { id: 'msg-3', sender: 'Omran Ismail', role: 'trivex', message: '[TEST] Saud will take site photos tomorrow and upload them.', date: '2026-03-22 3:00 PM', category: 'General', read_by_client: true, read_by_trivex: true },
+    { id: 'msg-4', sender: '[TEST] Recipe Unlimited', role: 'client', message: '[TEST] When can we expect the equipment layout drawing?', date: '2026-03-28 9:00 AM', category: 'Drawing', read_by_client: true, read_by_trivex: false },
   ],
 };
 
@@ -248,36 +171,14 @@ function getProjectUnreadCount(projectId) {
 const DEMO_CHANGE_ORDERS = {
   '1': [
     {
-      id: 'co-1', number: 'CO-001', date: '2026-03-10', status: 'approved',
-      description: 'Client requested upgraded marble countertops in service area',
+      id: 'co-1', number: '[TEST] CO-001', date: '2026-03-15', status: 'approved',
+      description: '[TEST] Countertop upgrade to marble — client request',
       reason: 'Client Request',
       items: [
-        { description: 'Remove spec laminate countertop', qty: 1, unit: 'lot', unit_cost: -2800 },
-        { description: 'Supply & install marble countertop', qty: 1, unit: 'lot', unit_cost: 7000 },
+        { description: 'Remove laminate countertop', qty: 1, unit: 'lot', unit_cost: -2800 },
+        { description: 'Supply & install marble', qty: 1, unit: 'lot', unit_cost: 7000 },
       ],
       revised_completion: null,
-    },
-    {
-      id: 'co-2', number: 'CO-002', date: '2026-03-18', status: 'sent',
-      description: 'Additional electrical circuits required for new equipment layout',
-      reason: 'Design Change',
-      items: [
-        { description: 'Additional 20A circuits (x4)', qty: 4, unit: 'each', unit_cost: 850 },
-        { description: 'Panel upgrade labour', qty: 1, unit: 'lot', unit_cost: 1200 },
-      ],
-      revised_completion: '2026-05-07',
-    },
-  ],
-  '2': [
-    {
-      id: 'co-3', number: 'CO-001', date: '2026-03-22', status: 'draft',
-      description: 'Unexpected asbestos abatement in ceiling tiles',
-      reason: 'Site Condition',
-      items: [
-        { description: 'Asbestos testing & report', qty: 1, unit: 'lot', unit_cost: 1500 },
-        { description: 'Abatement & disposal', qty: 1, unit: 'lot', unit_cost: 8500 },
-      ],
-      revised_completion: '2026-07-01',
     },
   ],
 };
@@ -480,15 +381,9 @@ const DEMO_SCHEDULE = [
 
 // Tasks
 const DEMO_TASKS = [
-  { id: 't-1', project_id: '1', title: 'Schedule final electrical inspection', assigned_to: 'saud', due_date: '2026-03-28', priority: 'high', completed: false },
-  { id: 't-2', project_id: '1', title: 'Order countertop material (marble upgrade)', assigned_to: 'alex', due_date: '2026-03-30', priority: 'high', completed: false },
-  { id: 't-3', project_id: '2', title: 'Submit plumbing permit application', assigned_to: 'omran', due_date: '2026-04-01', priority: 'medium', completed: false },
-  { id: 't-4', project_id: '5', title: 'Complete punch list walkthrough', assigned_to: 'alex', due_date: '2026-03-28', priority: 'high', completed: false },
-  { id: 't-5', project_id: '6', title: 'Review drywall taping quality', assigned_to: 'saud', due_date: '2026-03-27', priority: 'medium', completed: true },
-  { id: 't-6', project_id: '1', title: 'Upload updated floor plan Rev.4', assigned_to: 'omran', due_date: '2026-03-25', priority: 'low', completed: true },
-  { id: 't-7', project_id: '3', title: 'Confirm zoning with city planner', assigned_to: 'omran', due_date: '2026-04-05', priority: 'medium', completed: false },
-  { id: 't-8', project_id: '7', title: 'Get landlord sign-off on layout', assigned_to: 'omran', due_date: '2026-04-10', priority: 'medium', completed: false },
-  { id: 't-9', project_id: '2', title: 'Coordinate HVAC duct routing with landlord', assigned_to: 'alex', due_date: '2026-04-03', priority: 'low', completed: false },
+  { id: 't-1', project_id: '1', title: '[TEST] Schedule electrical inspection', assigned_to: 'saud', due_date: '2026-04-05', priority: 'high', completed: false },
+  { id: 't-2', project_id: '1', title: '[TEST] Order marble countertop material', assigned_to: 'alex', due_date: '2026-04-08', priority: 'high', completed: false },
+  { id: 't-3', project_id: '1', title: '[TEST] Upload floor plan Rev.4', assigned_to: 'omran', due_date: '2026-03-25', priority: 'low', completed: true },
 ];
 
 let scheduleWeekOffset = 0; // 0 = current week, -1 = last week, +1 = next week
@@ -500,25 +395,12 @@ const DEMO_SIGNOFFS = {};
 const DEMO_CHANGE_REQUESTS = {
   '1': [
     {
-      id: 'cr-1', number: 'CR-2026-001', status: 'quoted',
-      title: 'Add USB charging outlets to dining counter',
-      description: 'We would like USB-A and USB-C charging outlets installed along the customer dining counter (8 positions). This is a brand standard for new locations.',
-      location: 'Dining area — front counter',
+      id: 'cr-1', number: '[TEST] CR-2026-001', status: 'submitted',
+      title: '[TEST] Add USB outlets to dining counter',
+      description: 'We need USB-A and USB-C charging outlets along the dining counter (8 positions).',
+      location: 'Dining area',
       priority: 'Would like it done',
-      submitted_by: 'TDL Group', submitted_at: '2026-03-12',
-      quote_amount: 3200, quote_timeline: '3 additional days',
-      comments: [
-        { author: 'Omran Ismail', role: 'trivex', text: 'We can do this. Quoted $3,200 including parts and labour. Will add 3 days to electrical phase.', date: '2026-03-14' },
-        { author: 'TDL Group', role: 'client', text: 'That works. Please proceed once we approve.', date: '2026-03-15' },
-      ],
-    },
-    {
-      id: 'cr-2', number: 'CR-2026-002', status: 'submitted',
-      title: 'Relocate grease trap access panel',
-      description: 'Current grease trap access is in the walk path behind the service counter. Our operations team needs it relocated to the utility room for easier servicing.',
-      location: 'Kitchen — behind service counter',
-      priority: 'Required before opening',
-      submitted_by: 'TDL Group', submitted_at: '2026-03-24',
+      submitted_by: '[TEST] Recipe Unlimited', submitted_at: '2026-03-25',
       quote_amount: null, quote_timeline: null,
       comments: [],
     },
@@ -533,18 +415,10 @@ function nextCRNumber(projectId) {
 // Client activity feed per project
 const DEMO_CLIENT_ACTIVITY = {
   '1': [
-    { icon: 'fas fa-check-circle', color: 'var(--green)', text: 'Drywall & Taping marked complete', date: '2026-03-18' },
-    { icon: 'fas fa-exchange-alt', color: 'var(--orange)', text: 'Change order CO-002 sent for approval', date: '2026-03-18' },
-    { icon: 'fas fa-check', color: 'var(--green)', text: 'Change order CO-001 approved — +$4,200', date: '2026-03-12' },
-    { icon: 'fas fa-file-invoice-dollar', color: 'var(--blue)', text: 'Invoice INV-2026-002 issued — $152,000', date: '2026-03-01' },
-    { icon: 'fas fa-dollar-sign', color: 'var(--green)', text: 'Payment received — $114,000 (INV-2026-001)', date: '2026-02-25' },
-    { icon: 'fas fa-check-circle', color: 'var(--green)', text: 'Finishes phase marked complete', date: '2026-03-15' },
-    { icon: 'fas fa-check-circle', color: 'var(--green)', text: 'Framing phase marked complete', date: '2026-03-05' },
-    { icon: 'fas fa-file-invoice-dollar', color: 'var(--blue)', text: 'Invoice INV-2026-001 issued — $114,000', date: '2026-01-20' },
-  ],
-  '5': [
-    { icon: 'fas fa-clipboard-check', color: 'var(--orange)', text: 'Punch list walkthrough scheduled for Mar 28', date: '2026-03-25' },
-    { icon: 'fas fa-file-invoice-dollar', color: 'var(--blue)', text: 'Final invoice INV-2026-005 issued — $102,000', date: '2026-03-20' },
+    { icon: 'fas fa-check-circle', color: 'var(--green)', text: '[TEST] Drywall & Taping marked complete', date: '2026-03-18' },
+    { icon: 'fas fa-check', color: 'var(--green)', text: '[TEST] Change order CO-001 approved — +$4,200', date: '2026-03-15' },
+    { icon: 'fas fa-file-invoice-dollar', color: 'var(--blue)', text: '[TEST] Deposit invoice issued — $93,000', date: '2026-02-15' },
+    { icon: 'fas fa-dollar-sign', color: 'var(--green)', text: '[TEST] Payment received — $93,000', date: '2026-03-08' },
   ],
 };
 
@@ -6667,39 +6541,17 @@ const PIPELINE_STAGES = [
 ];
 
 const DEMO_PIPELINE = [
-  { id: 'pl-1', brand: "Dairy Queen", contact: 'Nina Desmond', email: 'nina@idqcanada.com', phone: '905-555-1001', province: 'ON', stage: 'proposal_sent', notes: 'Interested in 3 Ontario locations. Sent proposal Mar 15.', last_activity: '2026-03-15',
+  { id: 'pl-1', brand: "[TEST] Dairy Queen", contact: 'Nina Desmond', email: 'nina@idqcanada.com', phone: '905-555-1001', province: 'ON', stage: 'proposal_sent', notes: '[TEST] Interested in 3 Ontario locations.', last_activity: '2026-03-15',
     activities: [
-      { type: 'email', description: 'Sent franchise fit-out proposal for 3 locations', date: '2026-03-15' },
-      { type: 'meeting', description: 'Virtual meeting — discussed scope and timeline', date: '2026-03-08' },
-      { type: 'call', description: 'Initial discovery call — 3 locations in ON', date: '2026-03-01' },
+      { type: 'email', description: '[TEST] Sent proposal for 3 locations', date: '2026-03-15' },
+      { type: 'call', description: '[TEST] Discovery call', date: '2026-03-01' },
     ]},
-  { id: 'pl-2', brand: "Wendy's", contact: 'Tom Henderson', email: 'tom@wendys.ca', phone: '416-555-1002', province: 'ON', stage: 'won', notes: 'Won London location. Project created.', last_activity: '2026-02-28',
+  { id: 'pl-2', brand: "[TEST] Recipe Unlimited", contact: 'Sarah Miller', email: 'sarah@recipeunltd.com', phone: '416-555-1002', province: 'ON', stage: 'won', notes: '[TEST] Won Burlington location.', last_activity: '2026-02-10',
     activities: [
-      { type: 'note', description: 'Contract signed. Project created in XOS.', date: '2026-02-28' },
-      { type: 'meeting', description: 'Final negotiation — agreed on terms', date: '2026-02-20' },
+      { type: 'note', description: '[TEST] Contract signed. Project created.', date: '2026-02-10' },
     ]},
-  { id: 'pl-3', brand: "Jersey Mike's", contact: 'James Wu', email: 'james@jerseymikes.ca', phone: '905-555-1003', province: 'ON', stage: 'meeting_booked', notes: 'Meeting Mar 30 to discuss 2 GTA locations.', last_activity: '2026-03-22',
-    activities: [
-      { type: 'email', description: 'Confirmed meeting for Mar 30', date: '2026-03-22' },
-      { type: 'call', description: 'Discussed potential locations in Oakville and Whitby', date: '2026-03-15' },
-    ]},
-  { id: 'pl-4', brand: "Firehouse Subs", contact: 'Sarah Liu', email: 'sarah@firehousesubs.ca', phone: '416-555-1004', province: 'ON', stage: 'contacted', notes: 'New to Canadian market, exploring GTA.', last_activity: '2026-03-20',
-    activities: [
-      { type: 'email', description: 'Sent intro email and company profile', date: '2026-03-20' },
-    ]},
-  { id: 'pl-5', brand: "Five Guys", contact: 'Mike Robinson', email: 'mike@fiveguys.ca', phone: '905-555-1005', province: 'ON', stage: 'researched', notes: 'Expanding in Hamilton/Burlington corridor.', last_activity: '2026-03-18',
+  { id: 'pl-3', brand: "[TEST] Five Guys", contact: 'Mike Robinson', email: 'mike@fiveguys.ca', phone: '905-555-1005', province: 'ON', stage: 'researched', notes: '[TEST] Expanding in Hamilton corridor.', last_activity: '2026-03-18',
     activities: []},
-  { id: 'pl-6', brand: "Chipotle", contact: 'Priya Sharma', email: 'priya@chipotle.ca', phone: '416-555-1006', province: 'ON', stage: 'followed_up', notes: 'Sent follow-up after initial call. Waiting on response.', last_activity: '2026-03-12',
-    activities: [
-      { type: 'email', description: 'Follow-up email with case studies', date: '2026-03-12' },
-      { type: 'call', description: 'Cold call — interested in Toronto expansion', date: '2026-03-05' },
-    ]},
-  { id: 'pl-7', brand: "Mary Brown's", contact: 'Ahmed Khan', email: 'ahmed@marybrowns.com', phone: '905-555-1007', province: 'ON', stage: 'researched', notes: 'Canadian brand, expanding in Southern Ontario.', last_activity: '2026-03-10',
-    activities: []},
-  { id: 'pl-8', brand: "KFC", contact: 'Li Chen', email: 'li.chen@yum.com', phone: '416-555-1008', province: 'ON', stage: 'contacted', notes: 'Yum! Brands looking for GC in Ontario.', last_activity: '2026-03-14',
-    activities: [
-      { type: 'call', description: 'Spoke with regional development lead', date: '2026-03-14' },
-    ]},
 ];
 
 let activePipelineId = null;
