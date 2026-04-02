@@ -1292,7 +1292,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // APP ENTRY
 // ============================================
 
-function enterApp() {
+async function enterApp() {
+  // Load all data from Supabase before rendering
+  if (typeof loadAllData === 'function' && sbClient) {
+    try {
+      await loadAllData();
+    } catch (err) {
+      console.warn('Failed to load Supabase data, using demo data:', err);
+    }
+  }
+
   document.getElementById('login-screen').style.display = 'none';
   const portalScreen = document.getElementById('portal-login-screen');
   if (portalScreen) portalScreen.style.display = 'none';
@@ -2748,6 +2757,7 @@ function changeProjectStatus(projectId, status) {
   if (status === 'archived' && !confirm('Archive "' + p.name + '"? It will move to the Archived tab.')) return;
   if (status === 'lost' && !confirm('Mark "' + p.name + '" as Lost? It will move to the Lost tab.')) return;
   p.status = status;
+  if (typeof updateProjectField === 'function') updateProjectField(projectId, 'status', status);
   switchProjectTab(activeProjectTab);
 }
 
@@ -3015,6 +3025,8 @@ function updateMilestoneField(projectId, idx, field, value) {
     if (field === 'status' && value !== 'complete') {
       ms[idx].completed_date = null;
     }
+    // Save to Supabase
+    if (typeof saveMilestone === 'function') saveMilestone(ms[idx]);
   }
 }
 
@@ -4200,7 +4212,7 @@ function sendClientMessage(projectId) {
   const category = catSelect ? catSelect.value : 'General';
   const isClient = currentUser.role === 'client';
 
-  DEMO_CLIENT_MESSAGES[projectId].push({
+  const msg = {
     id: 'msg-' + Date.now(),
     sender: currentUser.full_name,
     role: isClient ? 'client' : 'trivex',
@@ -4209,7 +4221,9 @@ function sendClientMessage(projectId) {
     category,
     read_by_client: !isClient,
     read_by_trivex: isClient ? false : true,
-  });
+  };
+  DEMO_CLIENT_MESSAGES[projectId].push(msg);
+  if (typeof saveMessage === 'function') saveMessage(projectId, msg);
   input.value = '';
 
   if (isClient) {
@@ -4446,6 +4460,21 @@ function saveDocUpload(projectId, side) {
       docs.trivex.push(doc);
     } else {
       docs.client.push(doc);
+    }
+
+    // Save to Supabase storage + database
+    if (sb()) {
+      (async function() {
+        try {
+          const url = await uploadDocumentFile(file, projectId);
+          if (url) doc.fileData = url;
+          await sb().from('documents').insert({
+            project_id: projectId, name: doc.name, category: doc.category,
+            file_url: url || null, file_size: doc.size, side: side,
+            shared: doc.shared || false, uploaded_by: currentUser.id,
+          });
+        } catch(err) { console.error('Doc save error:', err); }
+      })();
     }
 
     document.getElementById('doc-upload-modal').remove();
@@ -5595,7 +5624,8 @@ function recordPayment(id) {
   if (amount <= 0) { alert('Enter a valid amount.'); return; }
 
   if (!inv.payments) inv.payments = [];
-  inv.payments.push({ amount, date, method });
+  const pay = { amount, date, method };
+  inv.payments.push(pay);
   inv.amount_paid += amount;
 
   // Update status
@@ -5604,6 +5634,9 @@ function recordPayment(id) {
   } else if (inv.amount_paid > 0) {
     inv.status = 'partially_paid';
   }
+
+  // Save to Supabase
+  if (typeof savePayment === 'function') savePayment(inv.id, pay);
 
   document.getElementById('payment-modal').remove();
   navigateTo('invoice-detail');
@@ -6424,6 +6457,7 @@ function toggleTask(taskId) {
   const task = DEMO_TASKS.find(t => t.id === taskId);
   if (task) {
     task.completed = !task.completed;
+    if (typeof saveTask === 'function') saveTask(task);
     navigateTo('schedule');
   }
 }
@@ -6514,7 +6548,7 @@ function showNewTaskModal() {
 function saveNewTask() {
   const title = document.getElementById('task-title').value.trim();
   if (!title) { alert('Enter a task title.'); return; }
-  DEMO_TASKS.push({
+  const task = {
     id: 't-' + Date.now(),
     project_id: document.getElementById('task-project').value,
     title,
@@ -6522,7 +6556,9 @@ function saveNewTask() {
     due_date: document.getElementById('task-due').value,
     priority: document.getElementById('task-priority').value,
     completed: false,
-  });
+  };
+  DEMO_TASKS.push(task);
+  if (typeof saveTask === 'function') saveTask(task);
   document.getElementById('task-modal').remove();
   navigateTo('schedule');
 }
@@ -7080,6 +7116,9 @@ function saveReceipt() {
   };
 
   DEMO_EXPENSES.unshift(expense);
+
+  // Save to Supabase
+  if (typeof saveExpense === 'function') saveExpense(expense);
 
   const proj = DEMO_PROJECTS.find(p => p.id === projectId);
   document.getElementById('receipt-saved-detail').textContent =
