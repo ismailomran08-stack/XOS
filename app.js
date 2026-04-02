@@ -1397,7 +1397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') handleLogin();
   });
   document.getElementById('login-email').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') document.getElementById('login-password').focus();
+    if (e.key === 'Enter') handleLogin();
   });
 
   // Check for existing Supabase session
