@@ -1812,7 +1812,7 @@ pageRenderers['project-detail'] = () => {
         </div>
 
         ${milestones.map((m, i) => {
-          const icon = m.status === 'complete' ? 'fas fa-check-circle' : m.status === 'in_progress' ? 'fas fa-spinner fa-spin' : 'far fa-circle';
+          const icon = m.status === 'complete' ? 'fas fa-check-circle' : m.status === 'in_progress' ? 'fas fa-wrench' : 'far fa-circle';
           const iconColor = m.status === 'complete' ? 'var(--green)' : m.status === 'in_progress' ? 'var(--orange)' : 'var(--text-light)';
           const lineColor = m.status === 'complete' ? 'var(--green)' : 'var(--card-border)';
           const isLast = i === milestones.length - 1;
@@ -3673,7 +3673,7 @@ pageRenderers['client-portal'] = () => {
 
         <div style="display:flex;flex-direction:column;gap:10px;">
           ${milestones.map((m, i) => {
-            const icon = m.status === 'complete' ? 'fas fa-check-circle' : m.status === 'in_progress' ? 'fas fa-circle-notch fa-spin' : 'far fa-circle';
+            const icon = m.status === 'complete' ? 'fas fa-check-circle' : m.status === 'in_progress' ? 'fas fa-wrench' : 'far fa-circle';
             const iconColor = m.status === 'complete' ? 'var(--green)' : m.status === 'in_progress' ? 'var(--orange)' : 'var(--text-light)';
             const signoff = DEMO_SIGNOFFS[m.id];
             const needsSignoff = m.status === 'complete' && !signoff;

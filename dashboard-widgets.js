@@ -130,16 +130,44 @@ function renderWidgetContent(widget) {
   }
 
   if (t === 'recent-activity') {
-    return clickableWidget(null,
-      '<div style="padding:4px 0;">' +
-      '<ul class="activity-list">' +
-        activityItem('var(--green)', 'Saud submitted receipt — Home Depot $2,340.50', '2 hours ago') +
-        activityItem('var(--blue)', 'Invoice INV-2026-002 partially paid — $80,000', '5 hours ago') +
-        activityItem('var(--orange)', 'Popeyes Scarborough moved to Punch List', 'Yesterday') +
-        activityItem('var(--purple)', 'New estimate created — Jersey Mikes Oakville', '2 days ago') +
-        activityItem('var(--green)', 'Drawing approved — Tim Hortons Signage Package', '3 days ago') +
-      '</ul></div>'
-    );
+    // Build clickable activity items from real data
+    var actItems = [];
+
+    // Recent expenses
+    DEMO_EXPENSES.slice(0, 3).forEach(function(e) {
+      var proj = DEMO_PROJECTS.find(function(p) { return p.id === e.project_id; });
+      actItems.push({
+        color: 'var(--green)', text: e.vendor + ' — ' + formatCAD(e.amount),
+        time: e.expense_date, onclick: "navigateTo('expenses')"
+      });
+    });
+
+    // Recent invoices
+    DEMO_INVOICES.slice(0, 2).forEach(function(inv) {
+      actItems.push({
+        color: 'var(--blue)', text: inv.invoice_number + ' — ' + formatCAD(inv.amount) + ' (' + inv.status.replace(/_/g, ' ') + ')',
+        time: inv.issue_date || '', onclick: "viewInvoice('" + inv.id + "')"
+      });
+    });
+
+    // Recent tasks
+    DEMO_TASKS.filter(function(t2) { return t2.completed; }).slice(0, 1).forEach(function(tk) {
+      actItems.push({
+        color: 'var(--purple)', text: 'Task completed: ' + tk.title,
+        time: tk.due_date, onclick: "navigateTo('schedule')"
+      });
+    });
+
+    var html2 = '<div style="padding:4px 0;"><ul class="activity-list">';
+    actItems.forEach(function(a) {
+      html2 += '<li class="activity-item" style="cursor:pointer;" onclick="' + a.onclick + '">' +
+        '<div class="activity-dot" style="background:' + a.color + ';"></div>' +
+        '<div><div style="font-size:13px;">' + a.text + '</div><div class="activity-time">' + a.time + '</div></div>' +
+      '</li>';
+    });
+    if (actItems.length === 0) html2 += '<li class="text-muted" style="text-align:center;padding:16px;">No recent activity.</li>';
+    html2 += '</ul></div>';
+    return html2;
   }
 
   if (t === 'receipt-capture') {
