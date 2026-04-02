@@ -230,27 +230,6 @@ const DEMO_SUB_ASSIGNMENTS = {
       payments: [{ amount: 15300, date: '2026-02-20' }],
       notes: [] },
   ],
-  '2': [
-    { sub_id: 'sub-1', contract_amount: 28000, scope: 'Full electrical — service, drive-thru', amount_paid: 14000,
-      payments: [{ amount: 14000, date: '2026-03-05' }],
-      notes: [] },
-    { sub_id: 'sub-3', contract_amount: 22000, scope: 'Kitchen plumbing, washrooms, grease trap', amount_paid: 0,
-      payments: [],
-      notes: [] },
-  ],
-  '5': [
-    { sub_id: 'sub-6', contract_amount: 18000, scope: 'Porcelain tile throughout, transitions', amount_paid: 18000,
-      payments: [{ amount: 9000, date: '2026-02-10' }, { amount: 9000, date: '2026-03-01' }],
-      notes: [{ text: 'Excellent finish. Would use again.', date: '2026-03-05' }] },
-    { sub_id: 'sub-8', contract_amount: 14000, scope: 'Interior + exterior signage install', amount_paid: 7000,
-      payments: [{ amount: 7000, date: '2026-03-15' }],
-      notes: [{ text: 'Signage alignment flagged in punch list.', date: '2026-03-25' }] },
-  ],
-  '6': [
-    { sub_id: 'sub-5', contract_amount: 16500, scope: 'Drywall throughout — 2,400 sqft', amount_paid: 16500,
-      payments: [{ amount: 8250, date: '2026-03-01' }, { amount: 8250, date: '2026-03-20' }],
-      notes: [] },
-  ],
 };
 
 // Due Diligence Checklist Template
@@ -322,16 +301,6 @@ const DEMO_DD_CHECKLISTS = {
     c['Permits'][0] = { name: 'Zoning confirmation', status: 'confirmed', notes: 'Commercial food service permitted', assigned_to: 'Omran' };
     c['Permits'][1] = { name: 'Landlord approval required', status: 'confirmed', notes: 'LOI signed, lease in progress', assigned_to: 'Omran' };
     c['Permits'][2] = { name: 'Heritage designation', status: 'na', notes: 'Not applicable', assigned_to: 'Omran' };
-    return c;
-  })(),
-  '2': (() => {
-    const c = generateDDChecklist();
-    // Subway — partially done
-    c['Utilities'][0] = { name: 'Electrical panel capacity (amps)', status: 'confirmed', notes: '100A — may need upgrade', assigned_to: 'Saud' };
-    c['Utilities'][1] = { name: 'Gas service availability', status: 'not_confirmed', notes: 'Checking with Enbridge', assigned_to: 'Alex' };
-    c['Utilities'][3] = { name: 'Grease trap requirement', status: 'confirmed', notes: 'Required', assigned_to: 'Omran' };
-    c['Structural'][1] = { name: 'Ceiling height (clear)', status: 'confirmed', notes: '10ft clear', assigned_to: 'Saud' };
-    c['Permits'][0] = { name: 'Zoning confirmation', status: 'confirmed', notes: 'OK', assigned_to: 'Omran' };
     return c;
   })(),
 };
@@ -477,15 +446,6 @@ const DEMO_DRAWINGS = {
       approval: { id: 'apr-2', number: 'APR-2026-002', status: 'approved', requested_by: 'Omran Ismail', requested_at: '2026-02-28', approved_by: 'TDL Group', approved_at: '2026-03-02', description: 'Final signage layout for approval.' },
     },
   ],
-  '2': [
-    {
-      id: 'dwg-5', title: 'Floor Plan — Subway Standard', drawing_number: 'DWG-001', category: 'Floor Plans',
-      revision: 'A', status: 'current', shared_with_client: true,
-      uploaded_by: 'Omran Ismail', created_at: '2026-03-15', file_type: 'pdf',
-      revisions: [{ rev: 'A', date: '2026-03-15', uploaded_by: 'Omran Ismail', status: 'current' }],
-      markups: [], approval: null,
-    },
-  ],
 };
 
 // Client-uploaded drawings
@@ -543,29 +503,6 @@ const DEMO_BID_PACKAGES = {
             { id: 'best-4', version: 1, name: 'ProFloor — Tile Estimate.pdf', submitted_at: '2026-03-25', fileData: null, approved: false },
           ]},
       ],
-      awarded_to: null, awarded_amount: null,
-    },
-  ],
-  '2': [
-    {
-      id: 'bp-4', trade: 'Plumbing', scope: 'Kitchen plumbing, washrooms, grease trap install, drive-thru drain',
-      status: 'open',
-      created_at: '2026-03-18', deadline: '2026-04-02',
-      invited: ['sub-3'],
-      bids: [
-        { sub_id: 'sub-3', amount: 24500, timeline: '2 weeks', notes: 'Grease trap 50gal included. Permit fees extra.', submitted_at: '2026-03-22', status: 'submitted',
-          estimates: [
-            { id: 'best-5', version: 1, name: 'Ontario Plumbing — Bid Package.pdf', submitted_at: '2026-03-22', fileData: null, approved: false },
-          ]},
-      ],
-      awarded_to: null, awarded_amount: null,
-    },
-    {
-      id: 'bp-5', trade: 'Drywall', scope: 'Full drywall — walls, soffits, bulkheads, taping, sanding (2,200 sqft)',
-      status: 'open',
-      created_at: '2026-03-22', deadline: '2026-04-05',
-      invited: ['sub-5'],
-      bids: [],
       awarded_to: null, awarded_amount: null,
     },
   ],
@@ -630,13 +567,6 @@ const DEMO_DOCUMENTS = {
       { id: 'dreq-1', name: 'Certificate of Insurance', category: 'Insurance', reason: 'Required before construction start', deadline: '2026-02-01', status: 'fulfilled', fulfilled_doc: 'cdoc-4' },
       { id: 'dreq-2', name: 'Franchise Agreement (relevant sections)', category: 'Brand Standards', reason: 'Need equipment specs and layout requirements', deadline: '2026-04-01', status: 'pending' },
     ],
-  },
-  '2': {
-    trivex: [
-      { id: 'doc-10', name: 'GC Contract — Subway Mississauga.pdf', category: 'Contracts', size: '2.9 MB', uploaded_by: 'Omran Ismail', date: '2026-02-08', shared: true },
-    ],
-    client: [],
-    requests: [],
   },
 };
 let markupMode = null; // null, 'arrow', 'rect', 'circle', 'text', 'freehand'
@@ -1273,17 +1203,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') handleLogin();
   });
 
-  // Check for existing Supabase session
+  // Check for existing Supabase session — keeps you logged in on refresh
   if (sbClient) {
     sbClient.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
+      if (session && session.user) {
         sbClient.from('profiles').select('*').eq('id', session.user.id).single().then(({ data: profile }) => {
           if (profile) {
             currentUser = profile;
             enterApp();
           }
+        }).catch(err => {
+          console.warn('Profile fetch failed:', err);
+          // Still try to enter with basic user info
+          currentUser = { id: session.user.id, email: session.user.email, full_name: session.user.email.split('@')[0], role: 'admin', avatar_initials: session.user.email.substring(0, 2).toUpperCase() };
+          enterApp();
         });
       }
+    }).catch(err => {
+      console.warn('Session check failed:', err);
     });
   }
 });
@@ -1755,13 +1692,13 @@ pageRenderers['project-detail'] = () => {
   if (tab === 'overview') {
     tabContent = `
       <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
-        ${statCard('Budget', formatCAD(revisedBudget), 'fas fa-dollar-sign', 'var(--green)', approvedCOTotal !== 0 ? 'Orig ' + formatCAD(p.budget) + ' + COs ' + formatCAD(approvedCOTotal) : 'Allocated')}
-        ${statCard('Construction', p.completion_pct + '%', 'fas fa-chart-line', 'var(--blue)', milestones.filter(m => m.status === 'complete').length + ' of ' + milestones.length + ' milestones')}
-        ${statCard('Invoiced', formatCAD(totalInvoiced), 'fas fa-file-invoice-dollar', 'var(--orange)', formatCAD(totalCollected) + ' collected')}
-        ${statCard('Expenses', formatCAD(totalExpenses), 'fas fa-receipt', 'var(--red)', projectExpenses.length + ' receipts')}
+        <div onclick="switchProjectTab('change_orders')" style="cursor:pointer;">${statCard('Budget', formatCAD(revisedBudget), 'fas fa-dollar-sign', 'var(--green)', approvedCOTotal !== 0 ? 'Orig ' + formatCAD(p.budget) + ' + COs ' + formatCAD(approvedCOTotal) : 'Allocated')}</div>
+        <div onclick="switchProjectTab('milestones')" style="cursor:pointer;">${statCard('Construction', p.completion_pct + '%', 'fas fa-chart-line', 'var(--blue)', milestones.filter(m => m.status === 'complete').length + ' of ' + milestones.length + ' milestones')}</div>
+        <div onclick="navigateTo('invoices')" style="cursor:pointer;">${statCard('Invoiced', formatCAD(totalInvoiced), 'fas fa-file-invoice-dollar', 'var(--orange)', formatCAD(totalCollected) + ' collected')}</div>
+        <div onclick="switchProjectTab('expenses')" style="cursor:pointer;">${statCard('Expenses', formatCAD(totalExpenses), 'fas fa-receipt', 'var(--red)', projectExpenses.length + ' receipts')}</div>
       </div>
 
-      <div class="stat-card mb-20">
+      <div class="stat-card mb-20" style="cursor:pointer;" onclick="switchProjectTab('milestones')">
         <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
           <span class="section-title" style="margin:0;">Construction Progress</span>
           <span style="font-size:14px;font-weight:700;">${p.completion_pct}%</span>
@@ -1839,7 +1776,7 @@ pageRenderers['project-detail'] = () => {
             const stageLabel = (inv.stage || 'invoice').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             const isPaid = inv.status === 'paid';
             return `
-            <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius);border:1px solid ${isPaid ? 'rgba(34,197,94,0.2)' : 'var(--card-border)'};background:${isPaid ? 'var(--green-bg)' : 'transparent'};">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius);border:1px solid ${isPaid ? 'rgba(34,197,94,0.2)' : 'var(--card-border)'};background:${isPaid ? 'var(--green-bg)' : 'transparent'};cursor:pointer;" onclick="viewInvoice('${inv.id}')">
               <i class="${isPaid ? 'fas fa-check-circle' : 'far fa-circle'}" style="color:${isPaid ? 'var(--green)' : 'var(--text-light)'};font-size:16px;flex-shrink:0;"></i>
               <div style="flex:1;min-width:0;">
                 <div style="font-size:13px;font-weight:600;">${inv.invoice_number} — ${stageLabel}</div>
