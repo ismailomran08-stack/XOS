@@ -1809,7 +1809,7 @@ pageRenderers['project-detail'] = () => {
         </div>
 
         ${milestones.map((m, i) => {
-          const icon = m.status === 'complete' ? 'fas fa-check-circle' : m.status === 'in_progress' ? 'fas fa-wrench' : 'far fa-circle';
+          const icon = m.status === 'complete' ? 'fas fa-check-circle' : m.status === 'in_progress' ? 'fas fa-square' : 'far fa-circle';
           const iconColor = m.status === 'complete' ? 'var(--green)' : m.status === 'in_progress' ? 'var(--orange)' : 'var(--text-light)';
           const lineColor = m.status === 'complete' ? 'var(--green)' : 'var(--card-border)';
           const isLast = i === milestones.length - 1;
@@ -2892,7 +2892,11 @@ function saveSitePhoto(projectId) {
   if (!_sitePhotoData) return;
   var milestoneId = document.getElementById('sp-milestone').value;
   var caption = document.getElementById('sp-caption').value;
+  var ms = (DEMO_MILESTONES[projectId] || []).find(function(m) { return m.id === milestoneId; });
+  var stageName = ms ? ms.name : 'Stage';
+  var photoDate = new Date().toISOString().split('T')[0];
 
+  // Save to milestone photos
   if (!DEMO_SITE_PHOTOS[projectId]) DEMO_SITE_PHOTOS[projectId] = {};
   if (!DEMO_SITE_PHOTOS[projectId][milestoneId]) DEMO_SITE_PHOTOS[projectId][milestoneId] = [];
   DEMO_SITE_PHOTOS[projectId][milestoneId].push({
@@ -2900,11 +2904,24 @@ function saveSitePhoto(projectId) {
     url: _sitePhotoData,
     caption: caption,
     uploaded_by: currentUser.full_name,
-    date: new Date().toISOString().split('T')[0],
+    date: photoDate,
   });
 
-  var ms = (DEMO_MILESTONES[projectId] || []).find(function(m) { return m.id === milestoneId; });
-  document.getElementById('sp-saved-detail').textContent = (ms ? ms.name : 'Stage') + (caption ? ' — ' + caption : '');
+  // Also save to project documents folder (Photos category)
+  if (!DEMO_DOCUMENTS[projectId]) DEMO_DOCUMENTS[projectId] = { trivex: [], client: [], requests: [] };
+  DEMO_DOCUMENTS[projectId].trivex.push({
+    id: 'doc-sp-' + Date.now(),
+    name: stageName + ' — ' + photoDate + (caption ? ' — ' + caption : '') + '.jpg',
+    category: 'Photos',
+    size: 'Photo',
+    uploaded_by: currentUser.full_name,
+    date: photoDate,
+    shared: false,
+    fileData: _sitePhotoData,
+    fileType: 'image/jpeg',
+  });
+
+  document.getElementById('sp-saved-detail').textContent = stageName + (caption ? ' — ' + caption : '');
   document.getElementById('sp-step-2').style.display = 'none';
   document.getElementById('sp-step-3').style.display = 'block';
   _sitePhotoData = null;
@@ -2915,6 +2932,10 @@ function uploadSitePhoto(input, projectId, milestoneId) {
   if (!file) return;
   var reader = new FileReader();
   reader.onload = function(e) {
+    var ms = (DEMO_MILESTONES[projectId] || []).find(function(m) { return m.id === milestoneId; });
+    var stageName = ms ? ms.name : 'Stage';
+    var photoDate = new Date().toISOString().split('T')[0];
+
     if (!DEMO_SITE_PHOTOS[projectId]) DEMO_SITE_PHOTOS[projectId] = {};
     if (!DEMO_SITE_PHOTOS[projectId][milestoneId]) DEMO_SITE_PHOTOS[projectId][milestoneId] = [];
     DEMO_SITE_PHOTOS[projectId][milestoneId].push({
@@ -2922,8 +2943,23 @@ function uploadSitePhoto(input, projectId, milestoneId) {
       url: e.target.result,
       caption: '',
       uploaded_by: currentUser.full_name,
-      date: new Date().toISOString().split('T')[0],
+      date: photoDate,
     });
+
+    // Also save to project documents folder
+    if (!DEMO_DOCUMENTS[projectId]) DEMO_DOCUMENTS[projectId] = { trivex: [], client: [], requests: [] };
+    DEMO_DOCUMENTS[projectId].trivex.push({
+      id: 'doc-sp-' + Date.now(),
+      name: stageName + ' — ' + photoDate + '.jpg',
+      category: 'Photos',
+      size: 'Photo',
+      uploaded_by: currentUser.full_name,
+      date: photoDate,
+      shared: false,
+      fileData: e.target.result,
+      fileType: 'image/jpeg',
+    });
+
     switchProjectTab('milestones');
   };
   reader.readAsDataURL(file);
@@ -3667,7 +3703,7 @@ pageRenderers['client-portal'] = () => {
 
         <div style="display:flex;flex-direction:column;gap:10px;">
           ${milestones.map((m, i) => {
-            const icon = m.status === 'complete' ? 'fas fa-check-circle' : m.status === 'in_progress' ? 'fas fa-wrench' : 'far fa-circle';
+            const icon = m.status === 'complete' ? 'fas fa-check-circle' : m.status === 'in_progress' ? 'fas fa-square' : 'far fa-circle';
             const iconColor = m.status === 'complete' ? 'var(--green)' : m.status === 'in_progress' ? 'var(--orange)' : 'var(--text-light)';
             const signoff = DEMO_SIGNOFFS[m.id];
             const needsSignoff = m.status === 'complete' && !signoff;
@@ -7135,26 +7171,62 @@ function viewReceiptFull(expenseId) {
 // HELPER FUNCTIONS
 // ============================================
 
-// PDF viewer — shows in a modal instead of new tab
+// PDF viewer — shows in a modal with close + download
 function showPDFModal(html, title) {
-  var blob = new Blob([html], { type: 'text/html' });
-  var url = URL.createObjectURL(blob);
-
   var overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.id = 'pdf-viewer-modal';
   overlay.style.padding = '0';
-  overlay.innerHTML =
-    '<div style="width:100%;height:100%;display:flex;flex-direction:column;background:var(--card-bg);">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--card-border);flex-shrink:0;background:rgba(255,255,255,0.9);">' +
-        '<div style="font-size:14px;font-weight:600;color:var(--navy);">' + (title || 'Document') + '</div>' +
-        '<div style="display:flex;gap:8px;">' +
-          '<button class="btn btn-accent btn-sm" onclick="window.open(\'' + url + '\',\'_blank\')"><i class="fas fa-download"></i> Download</button>' +
-          '<button class="btn btn-outline btn-sm" onclick="document.getElementById(\'pdf-viewer-modal\').remove()"><i class="fas fa-times"></i> Close</button>' +
-        '</div>' +
-      '</div>' +
-      '<iframe src="' + url + '" style="flex:1;border:none;width:100%;"></iframe>' +
-    '</div>';
+  overlay.style.zIndex = '9999';
+
+  // Header bar
+  var header = document.createElement('div');
+  header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid #e5e7eb;flex-shrink:0;position:sticky;top:0;z-index:10;';
+  header.innerHTML = '<div style="font-size:14px;font-weight:600;color:#2c3e6b;">' + (title || 'Document') + '</div>';
+
+  var btnGroup = document.createElement('div');
+  btnGroup.style.cssText = 'display:flex;gap:8px;';
+
+  var dlBtn = document.createElement('button');
+  dlBtn.className = 'btn btn-accent btn-sm';
+  dlBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+  dlBtn.onclick = function() {
+    var blob = new Blob([html], { type: 'text/html' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (title || 'document') + '.html';
+    a.click();
+  };
+
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'btn btn-outline btn-sm';
+  closeBtn.innerHTML = '<i class="fas fa-times"></i> Close';
+  closeBtn.onclick = function() { overlay.remove(); };
+
+  btnGroup.appendChild(dlBtn);
+  btnGroup.appendChild(closeBtn);
+  header.appendChild(btnGroup);
+
+  // Content — render HTML directly in a scrollable div
+  var content = document.createElement('div');
+  content.style.cssText = 'flex:1;overflow-y:auto;background:#fff;';
+
+  var shadow = content.attachShadow ? content.attachShadow({ mode: 'open' }) : null;
+  if (shadow) {
+    shadow.innerHTML = html;
+  } else {
+    // Fallback: use iframe
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'width:100%;height:100%;border:none;';
+    iframe.srcdoc = html;
+    content.appendChild(iframe);
+  }
+
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;background:#fff;';
+  wrapper.appendChild(header);
+  wrapper.appendChild(content);
+  overlay.appendChild(wrapper);
   document.body.appendChild(overlay);
 }
 
