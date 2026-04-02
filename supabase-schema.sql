@@ -11,7 +11,7 @@ create table public.profiles (
   id uuid references auth.users on delete cascade primary key,
   email text unique not null,
   full_name text not null,
-  role text not null check (role in ('admin', 'field', 'client')),
+  role text not null check (role in ('admin', 'client', 'sub')),
   avatar_initials text,
   phone text,
   created_at timestamptz default now()

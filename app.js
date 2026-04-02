@@ -5,9 +5,8 @@
 // ============================================
 // SUPABASE INIT
 // ============================================
-// TODO: Replace with your Supabase project credentials
-const SUPABASE_URL = localStorage.getItem('xos_supabase_url') || '';
-const SUPABASE_ANON_KEY = localStorage.getItem('xos_supabase_key') || '';
+const SUPABASE_URL = 'https://ebppkrlykqjwtgzxzihe.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVicHBrcmx5a3Fqd3Rnenh6aWhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNTUzMDQsImV4cCI6MjA5MDczMTMwNH0.HgXgh7aX-1owL0HT1SOzk3tVYSEr2f7izP_Jm7aciGY';
 
 let sbClient = null;
 let currentUser = null;   // { id, email, full_name, role, avatar_initials }
