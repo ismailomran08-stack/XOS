@@ -1169,10 +1169,7 @@ function generateApprovedEstimatePDF(est, sub, bp, projectId) {
     '<div class="footer">Trivex Group Corp · Burlington, ON · Generated via XOS · This is a permanent record of estimate approval.</div>' +
     '</body></html>';
 
-  var w = window.open('', '_blank');
-  w.document.write(html);
-  w.document.close();
-  w.onload = function() { w.print(); };
+  showPDFModal(html, 'Document');
 }
 
 function downloadApprovedEstimate(projectId, bpId, subId) {
@@ -3114,10 +3111,7 @@ function exportDDPDF(projectId) {
   </div>
 </body></html>`;
 
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write(html);
-  printWindow.document.close();
-  printWindow.onload = () => printWindow.print();
+  showPDFModal(html, 'Document');
 }
 
 // ============================================
@@ -5144,10 +5138,7 @@ function exportEstimatePDF(id) {
   </div>
 </body></html>`;
 
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write(html);
-  printWindow.document.close();
-  printWindow.onload = () => printWindow.print();
+  showPDFModal(html, 'Document');
 }
 
 // ============================================
@@ -5698,10 +5689,7 @@ function exportInvoicePDF(id) {
   </div>
 </body></html>`;
 
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write(html);
-  printWindow.document.close();
-  printWindow.onload = () => printWindow.print();
+  showPDFModal(html, 'Document');
 }
 
 // ============================================
@@ -7146,6 +7134,29 @@ function viewReceiptFull(expenseId) {
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
+
+// PDF viewer — shows in a modal instead of new tab
+function showPDFModal(html, title) {
+  var blob = new Blob([html], { type: 'text/html' });
+  var url = URL.createObjectURL(blob);
+
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'pdf-viewer-modal';
+  overlay.style.padding = '0';
+  overlay.innerHTML =
+    '<div style="width:100%;height:100%;display:flex;flex-direction:column;background:var(--card-bg);">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--card-border);flex-shrink:0;background:rgba(255,255,255,0.9);">' +
+        '<div style="font-size:14px;font-weight:600;color:var(--navy);">' + (title || 'Document') + '</div>' +
+        '<div style="display:flex;gap:8px;">' +
+          '<button class="btn btn-accent btn-sm" onclick="window.open(\'' + url + '\',\'_blank\')"><i class="fas fa-download"></i> Download</button>' +
+          '<button class="btn btn-outline btn-sm" onclick="document.getElementById(\'pdf-viewer-modal\').remove()"><i class="fas fa-times"></i> Close</button>' +
+        '</div>' +
+      '</div>' +
+      '<iframe src="' + url + '" style="flex:1;border:none;width:100%;"></iframe>' +
+    '</div>';
+  document.body.appendChild(overlay);
+}
 
 function formatCAD(amount) {
   return '$' + Number(amount).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });

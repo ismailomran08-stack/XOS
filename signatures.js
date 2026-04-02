@@ -428,8 +428,5 @@ function generateSignedPDF(projectId, sigId) {
     '<div class="footer">Trivex Group Corp · Burlington, ON · Signed via XOS · This document is a legal record of digital signature.</div>' +
   '</body></html>';
 
-  var w = window.open('', '_blank');
-  w.document.write(html);
-  w.document.close();
-  w.onload = function() { w.print(); };
+  showPDFModal(html, 'Signed Document');
 }
