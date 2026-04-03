@@ -1227,8 +1227,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 
 async function enterApp() {
-  // Load all data from Supabase before rendering
-  if (typeof loadAllData === 'function' && sbClient) {
+  // Only load from Supabase if user authenticated via Supabase (has a real UUID, not an email as ID)
+  var isSupabaseUser = currentUser && currentUser.id && currentUser.id.length > 30;
+  if (isSupabaseUser && typeof loadAllData === 'function' && sbClient) {
     try {
       await loadAllData();
     } catch (err) {
