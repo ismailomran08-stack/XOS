@@ -6989,17 +6989,52 @@ function showManualEntry() {
   document.getElementById('receipt-step-4').style.display = 'block';
 }
 
+// Compress image to max width for faster API processing
+function compressReceiptImage(dataUrl, maxWidth) {
+  return new Promise(function(resolve, reject) {
+    var img = new Image();
+    img.onload = function() {
+      var w = img.width;
+      var h = img.height;
+      if (w > maxWidth) {
+        h = Math.round(h * maxWidth / w);
+        w = maxWidth;
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.8));
+    };
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+}
+
 async function processReceipt() {
   document.getElementById('receipt-step-2').style.display = 'none';
   document.getElementById('receipt-step-3').style.display = 'block';
 
   try {
-    const base64 = receiptImageData.replace(/^data:image\/[^;]+;base64,/, '');
+    // Compress image before sending — resize to max 1600px wide
+    let base64ToSend = receiptImageData;
+    let mediaTypeToSend = receiptMediaType;
+    try {
+      const compressed = await compressReceiptImage(receiptImageData, 1600);
+      base64ToSend = compressed;
+      mediaTypeToSend = 'image/jpeg'; // canvas always outputs jpeg
+    } catch (compErr) {
+      console.warn('Compression failed, sending original:', compErr);
+    }
+
+    // Strip data URI prefix
+    const base64 = base64ToSend.split(',')[1] || base64ToSend.replace(/^data:image\/[^;]+;base64,/, '');
 
     const res = await fetch('/api/receipt-ocr', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: base64, mediaType: receiptMediaType }),
+      body: JSON.stringify({ image: base64, mediaType: mediaTypeToSend }),
     });
 
     if (!res.ok) {
