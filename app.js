@@ -2049,11 +2049,12 @@ pageRenderers['project-detail'] = () => {
         <table class="data-table">
           <thead><tr><th style="width:50px;"></th><th>Vendor</th><th>Amount</th><th>Category</th><th>Date</th><th>Submitted By</th></tr></thead>
           <tbody>
-            ${projectExpenses.length > 0 ? projectExpenses.map(e => {
+            ${projectExpenses.length > 0 ? projectExpenses.map((e, idx) => {
               const user = DEMO_USERS[e.submitted_by];
-              return `<tr>
+              const isDup = projectExpenses.some((other, oidx) => oidx !== idx && other.vendor === e.vendor && Math.abs(other.amount - e.amount) < 0.01 && other.expense_date === e.expense_date);
+              return `<tr style="${isDup ? 'background:rgba(239,68,68,0.05);' : ''}">
                 <td>${e.receipt_thumbnail ? `<img src="${e.receipt_thumbnail}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid var(--card-border);" onclick="viewReceiptFull('${e.id}')" title="Click to view">` : '<i class="fas fa-receipt" style="color:var(--text-light);font-size:16px;"></i>'}</td>
-                <td><strong>${e.vendor}</strong>${e.notes ? `<div class="text-muted" style="font-size:11px;">${e.notes}</div>` : ''}</td>
+                <td><strong>${e.vendor}</strong>${isDup ? '<div style="font-size:10px;color:var(--red);font-weight:600;"><i class="fas fa-exclamation-triangle" style="margin-right:3px;"></i>Possible duplicate</div>' : ''}${e.notes ? `<div class="text-muted" style="font-size:11px;">${e.notes}</div>` : ''}</td>
                 <td style="font-weight:600;">${formatCAD(e.amount)}</td>
                 <td><span class="tag">${e.category}</span></td>
                 <td>${e.expense_date}</td>
@@ -5766,12 +5767,13 @@ pageRenderers.expenses = () => {
       <table class="data-table">
         <thead><tr><th style="width:50px;"></th><th>Vendor</th><th>Amount</th><th>Category</th><th>Date</th><th>Project</th><th>Submitted By</th></tr></thead>
         <tbody>
-          ${expenses.map(e => {
+          ${expenses.map((e, idx) => {
             const proj = DEMO_PROJECTS.find(p => p.id === e.project_id);
             const user = DEMO_USERS[e.submitted_by];
-            return `<tr>
+            const isDup = expenses.some((other, oidx) => oidx !== idx && other.vendor === e.vendor && Math.abs(other.amount - e.amount) < 0.01 && other.expense_date === e.expense_date);
+            return `<tr style="${isDup ? 'background:rgba(239,68,68,0.05);' : ''}">
               <td>${e.receipt_thumbnail ? `<img src="${e.receipt_thumbnail}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid var(--card-border);">` : '<i class="fas fa-receipt" style="color:var(--text-light);font-size:16px;"></i>'}</td>
-              <td><strong>${e.vendor}</strong>${e.notes ? `<div class="text-muted" style="font-size:11px;">${e.notes}</div>` : ''}</td>
+              <td><strong>${e.vendor}</strong>${isDup ? '<div style="font-size:10px;color:var(--red);font-weight:600;"><i class="fas fa-exclamation-triangle" style="margin-right:3px;"></i>Possible duplicate</div>' : ''}${e.notes ? `<div class="text-muted" style="font-size:11px;">${e.notes}</div>` : ''}</td>
               <td style="font-weight:600;">${formatCAD(e.amount)}</td>
               <td><span class="tag">${e.category}</span></td>
               <td>${e.expense_date}</td>
@@ -7074,10 +7076,37 @@ function saveReceipt() {
   const vendor = document.getElementById('receipt-vendor').value.trim();
   const amount = parseFloat(document.getElementById('receipt-amount').value);
   const projectId = document.getElementById('receipt-project').value;
+  const expDate = document.getElementById('receipt-date').value || '';
+  const notes = document.getElementById('receipt-notes').value || '';
 
   if (!vendor || !amount || !projectId) {
     alert('Please fill in vendor, amount, and select a project.');
     return;
+  }
+
+  // Duplicate detection — check vendor + amount + date
+  const duplicates = DEMO_EXPENSES.filter(function(e) {
+    const sameVendor = e.vendor && vendor && e.vendor.toLowerCase().replace(/\[test\]\s*/gi, '') === vendor.toLowerCase().replace(/\[test\]\s*/gi, '');
+    const sameAmount = Math.abs(e.amount - amount) < 0.01;
+    const sameDate = e.expense_date === expDate;
+    // Also check invoice/receipt number in notes
+    const sameNotes = notes && e.notes && notes.length > 3 && e.notes.toLowerCase().includes(notes.toLowerCase().substring(0, 10));
+    return (sameVendor && sameAmount && sameDate) || (sameVendor && sameAmount && sameNotes);
+  });
+
+  if (duplicates.length > 0) {
+    const dup = duplicates[0];
+    const proj = DEMO_PROJECTS.find(function(p) { return p.id === dup.project_id; });
+    const proceed = confirm(
+      'POSSIBLE DUPLICATE DETECTED\n\n' +
+      'An expense with the same details already exists:\n\n' +
+      'Vendor: ' + dup.vendor + '\n' +
+      'Amount: ' + formatCAD(dup.amount) + '\n' +
+      'Date: ' + dup.expense_date + '\n' +
+      'Project: ' + (proj ? proj.name : dup.project_id) + '\n\n' +
+      'Do you want to save it anyway?'
+    );
+    if (!proceed) return;
   }
 
   // Create thumbnail from the receipt image (small base64 for display)
