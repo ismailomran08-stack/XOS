@@ -80,34 +80,66 @@ async function updateProjectField(projectId, field, value) {
 // EXPENSES
 // ============================================
 async function loadExpenses() {
-  const { data } = await sb().from('expenses').select('*').order('created_at', { ascending: false });
+  const { data, error } = await sb().from('expenses').select('*').order('created_at', { ascending: false });
+  if (error) { console.error('Load expenses error:', error); return; }
   if (data && data.length > 0) {
-    DEMO_EXPENSES.length = 0;
+    // Merge Supabase data with demo data instead of replacing
     data.forEach(e => {
-      DEMO_EXPENSES.push({
-        id: e.id, project_id: e.project_id, vendor: e.vendor,
-        amount: parseFloat(e.amount), category: e.category,
-        expense_date: e.expense_date, receipt_url: e.receipt_url,
-        notes: e.notes, submitted_by: e.submitted_by || '',
+      // Don't add if already in demo data
+      if (DEMO_EXPENSES.find(d => d.id === e.id)) return;
+
+      var notes = e.notes || '';
+      var projectId = e.project_id;
+      // Reconstruct project_id from notes if stored there
+      if (notes.startsWith('[TRIVEX-CORP]')) projectId = 'trivex-corp';
+      var projMatch = notes.match(/\[Project:([^\]]+)\]/);
+      if (projMatch) projectId = projMatch[1];
+      // Clean notes
+      notes = notes.replace(/\[TRIVEX-CORP\]\s*/, '').replace(/\[Project:[^\]]+\]\s*/, '');
+
+      DEMO_EXPENSES.unshift({
+        id: e.id, project_id: projectId || 'trivex-corp',
+        vendor: e.vendor, amount: parseFloat(e.amount),
+        category: e.category, expense_date: e.expense_date,
+        receipt_url: e.receipt_url, notes: notes,
+        submitted_by: e.submitted_by || '',
       });
     });
+    console.log('Loaded ' + data.length + ' expenses from Supabase');
   }
 }
 
 async function saveExpense(expense) {
   if (!sb()) return;
-  const row = {
-    project_id: expense.project_id === 'trivex-corp' ? null : expense.project_id,
-    vendor: expense.vendor, amount: expense.amount,
-    category: expense.category, expense_date: expense.expense_date,
-    receipt_url: expense.receipt_url || null, notes: expense.notes,
-    submitted_by: currentUser ? currentUser.id : null,
-  };
-  // Store trivex-corp as notes prefix
-  if (expense.project_id === 'trivex-corp') row.notes = '[TRIVEX-CORP] ' + (expense.notes || '');
 
-  const { data } = await sb().from('expenses').insert(row).select().single();
-  if (data) expense.id = data.id;
+  // Don't save demo project IDs that aren't real UUIDs
+  var projId = expense.project_id;
+  var isRealUUID = projId && projId.length > 30 && projId.includes('-');
+
+  const row = {
+    project_id: isRealUUID ? projId : null,
+    vendor: expense.vendor,
+    amount: expense.amount,
+    category: expense.category,
+    expense_date: expense.expense_date,
+    receipt_url: null, // Don't store base64 in DB — too large
+    notes: (projId === 'trivex-corp' ? '[TRIVEX-CORP] ' : '') + (projId && !isRealUUID ? '[Project:' + projId + '] ' : '') + (expense.notes || ''),
+    submitted_by: currentUser && currentUser.id && currentUser.id.length > 30 ? currentUser.id : null,
+  };
+
+  try {
+    const { data, error } = await sb().from('expenses').insert(row).select().single();
+    if (error) {
+      console.error('Expense save error:', error);
+      return;
+    }
+    if (data) {
+      expense.id = data.id;
+      console.log('Expense saved to Supabase:', data.id);
+    }
+  } catch (err) {
+    console.error('Expense save failed:', err);
+  }
 }
 
 // ============================================
