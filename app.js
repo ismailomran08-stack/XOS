@@ -6844,7 +6844,7 @@ function openReceiptCapture() {
       <div id="receipt-step-1">
         <p class="text-muted" style="font-size:13px;margin-bottom:16px;">Take a photo of the receipt or select from your camera roll.</p>
         <input type="file" id="receipt-file-input" accept="image/*" capture="environment" style="display:none;" onchange="handleReceiptFile(this)">
-        <input type="file" id="receipt-pdf-input" accept="*/*" style="display:none;" onchange="handleReceiptFile(this)">
+        <input type="file" id="receipt-pdf-input" style="display:none;" onchange="handleReceiptFile(this)">
         <button class="receipt-capture-btn" onclick="document.getElementById('receipt-file-input').click()" style="margin-bottom:12px;">
           <i class="fas fa-camera"></i> Take Photo
         </button>
