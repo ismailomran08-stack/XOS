@@ -1,74 +1,35 @@
-const CACHE_NAME = 'xos-v1';
-const STATIC_ASSETS = [
-  '/',
-  '/app.js',
-  '/styles.css',
-  '/manifest.json',
-  '/offline.html',
-];
+const CACHE_NAME = 'xos-v3';
 
-// Install — cache static assets
+// Install — skip waiting immediately
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
-  );
   self.skipWaiting();
 });
 
-// Activate — clean old caches
+// Activate — delete ALL old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
+      return Promise.all(keys.map((key) => caches.delete(key)));
     })
   );
   self.clients.claim();
 });
 
-// Fetch — network-first for API, cache-first for static
+// Fetch — ALWAYS network first, cache only for offline fallback
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-
-  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
-  // API calls — network first, fall back to cache
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
-    return;
-  }
-
-  // Static assets — cache first, fall back to network
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request)
-        .then((response) => {
-          // Cache successful responses
-          if (response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(() => {
-          // Offline fallback for navigation requests
-          if (event.request.mode === 'navigate') {
-            return caches.match('/offline.html');
-          }
-        });
-    })
+    fetch(event.request)
+      .then((response) => {
+        return response;
+      })
+      .catch(() => {
+        if (event.request.mode === 'navigate') {
+          return new Response('<html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1e3c;color:#fff;text-align:center;"><div><h1>Offline</h1><p>Check your connection and try again.</p><button onclick="location.reload()" style="margin-top:16px;padding:12px 24px;background:#f97316;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;">Retry</button></div></body></html>', {
+            headers: { 'Content-Type': 'text/html' }
+          });
+        }
+      })
   );
 });
