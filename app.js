@@ -6847,12 +6847,13 @@ function openReceiptCapture() {
         <button class="receipt-capture-btn" onclick="document.getElementById('receipt-file-input').click()" style="margin-bottom:12px;">
           <i class="fas fa-camera"></i> Take Photo
         </button>
-        <button class="btn btn-outline btn-full" onclick="document.getElementById('receipt-file-input').removeAttribute('capture'); document.getElementById('receipt-file-input').click()">
-          <i class="fas fa-image"></i> Choose from Gallery
-        </button>
+        <label class="btn btn-outline btn-full" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <i class="fas fa-image" style="margin-right:6px;"></i> Choose from Gallery
+          <input type="file" accept="image/*" style="display:none;" onchange="handleReceiptFile(this)">
+        </label>
         <label class="btn btn-outline btn-full" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">
           <i class="fas fa-file-pdf" style="margin-right:6px;"></i> Upload PDF / File
-          <input type="file" style="display:none;" onchange="handleReceiptFile(this)">
+          <input type="file" accept=".pdf,.PDF,.jpg,.jpeg,.png,.heic" style="display:none;" onchange="handleReceiptFile(this)">
         </label>
       </div>
 
