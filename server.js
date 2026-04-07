@@ -41,7 +41,7 @@ app.post('/api/receipt-ocr', async (req, res) => {
   try {
     const message = await client.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 500,
+      max_tokens: 2000,
       messages: [{
         role: 'user',
         content: [
@@ -59,16 +59,18 @@ app.post('/api/receipt-ocr', async (req, res) => {
 
 Extract the following fields:
 - vendor: The business name or supplier name on the receipt/invoice
-- amount: The total amount due or paid (numbers only, no currency symbol, no commas — e.g. 142.50)
+- amount: The TOTAL amount due or paid (numbers only, no currency symbol, no commas — e.g. 142.50)
 - date: The date on the receipt or invoice in YYYY-MM-DD format
 - category: Choose EXACTLY ONE from this list: Materials, Labour, Equipment, Subcontractor, Permits, Other
-- notes: Any useful detail such as invoice number, PO number, or description of goods/services (max 100 chars, or empty string if none)
+- notes: Invoice number, PO number, or brief description (max 100 chars, or empty string if none)
+- items: An array of line items found on the receipt/invoice. Each item should have: description (string), qty (number, default 1), unit_price (number), total (number). Extract as many items as you can read clearly. If you cannot read items clearly, return an empty array.
 
 Rules:
 - If the image is an invoice (not a retail receipt), still extract the same fields
 - If you cannot read a field clearly, use an empty string — do not guess
+- For items, only include items you can read clearly — do not fabricate items
 - Return ONLY a valid JSON object with no explanation, no markdown, no backticks
-- Format: {"vendor":"","amount":"","date":"","category":"","notes":""}`
+- Format: {"vendor":"","amount":"","date":"","category":"","notes":"","items":[{"description":"","qty":1,"unit_price":0,"total":0}]}`
           }
         ],
       }],

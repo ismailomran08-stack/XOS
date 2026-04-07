@@ -1583,7 +1583,7 @@ pageRenderers['field-dashboard'] = () => {
           ${myExpenses.map(e => {
             const proj = DEMO_PROJECTS.find(p => p.id === e.project_id);
             return `<tr>
-              <td><strong>${e.vendor}</strong></td>
+              <td><strong style="cursor:pointer;color:var(--orange);" onclick="viewExpenseReceipt('${e.id}')">${e.vendor}</strong></td>
               <td>${formatCAD(e.amount)}</td>
               <td><span class="tag">${e.category}</span></td>
               <td>${e.expense_date}</td>
@@ -2054,7 +2054,7 @@ pageRenderers['project-detail'] = () => {
               const isDup = projectExpenses.some((other, oidx) => oidx !== idx && other.vendor === e.vendor && Math.abs(other.amount - e.amount) < 0.01 && other.expense_date === e.expense_date);
               return `<tr style="${isDup ? 'background:rgba(239,68,68,0.05);' : ''}">
                 <td>${e.receipt_thumbnail ? `<img src="${e.receipt_thumbnail}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid var(--card-border);" onclick="viewReceiptFull('${e.id}')" title="Click to view">` : '<i class="fas fa-receipt" style="color:var(--text-light);font-size:16px;"></i>'}</td>
-                <td><strong>${e.vendor}</strong>${isDup ? '<div style="font-size:10px;color:var(--red);font-weight:600;"><i class="fas fa-exclamation-triangle" style="margin-right:3px;"></i>Possible duplicate</div>' : ''}${e.notes ? `<div class="text-muted" style="font-size:11px;">${e.notes}</div>` : ''}</td>
+                <td><strong style="cursor:pointer;color:var(--orange);" onclick="viewExpenseReceipt('${e.id}')">${e.vendor}</strong>${isDup ? '<div style="font-size:10px;color:var(--red);font-weight:600;"><i class="fas fa-exclamation-triangle" style="margin-right:3px;"></i>Possible duplicate</div>' : ''}${e.notes ? `<div class="text-muted" style="font-size:11px;">${e.notes}</div>` : ''}</td>
                 <td style="font-weight:600;">${formatCAD(e.amount)}</td>
                 <td><span class="tag">${e.category}</span></td>
                 <td>${e.expense_date}</td>
@@ -5773,7 +5773,7 @@ pageRenderers.expenses = () => {
             const isDup = expenses.some((other, oidx) => oidx !== idx && other.vendor === e.vendor && Math.abs(other.amount - e.amount) < 0.01 && other.expense_date === e.expense_date);
             return `<tr style="${isDup ? 'background:rgba(239,68,68,0.05);' : ''}">
               <td>${e.receipt_thumbnail ? `<img src="${e.receipt_thumbnail}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid var(--card-border);">` : '<i class="fas fa-receipt" style="color:var(--text-light);font-size:16px;"></i>'}</td>
-              <td><strong>${e.vendor}</strong>${isDup ? '<div style="font-size:10px;color:var(--red);font-weight:600;"><i class="fas fa-exclamation-triangle" style="margin-right:3px;"></i>Possible duplicate</div>' : ''}${e.notes ? `<div class="text-muted" style="font-size:11px;">${e.notes}</div>` : ''}</td>
+              <td><strong style="cursor:pointer;color:var(--orange);" onclick="viewExpenseReceipt('${e.id}')">${e.vendor}</strong>${isDup ? '<div style="font-size:10px;color:var(--red);font-weight:600;"><i class="fas fa-exclamation-triangle" style="margin-right:3px;"></i>Possible duplicate</div>' : ''}${e.notes ? `<div class="text-muted" style="font-size:11px;">${e.notes}</div>` : ''}</td>
               <td style="font-weight:600;">${formatCAD(e.amount)}</td>
               <td><span class="tag">${e.category}</span></td>
               <td>${e.expense_date}</td>
@@ -6928,6 +6928,8 @@ function openReceiptCapture() {
             <label class="form-label">Notes</label>
             <input id="receipt-notes" class="form-input-styled" placeholder="Optional notes">
           </div>
+          <div id="receipt-items-list" style="display:none;margin-bottom:14px;"></div>
+          <button class="btn btn-outline btn-full" style="margin-bottom:10px;" onclick="viewCurrentReceipt()"><i class="fas fa-image"></i> View Receipt Image</button>
           <button class="btn btn-accent btn-full btn-lg" onclick="saveReceipt()"><i class="fas fa-check"></i> Save Receipt</button>
         </div>
       </div>
@@ -7047,6 +7049,9 @@ async function processReceipt() {
     const data = await res.json();
     if (data.error) throw new Error(data.error);
 
+    // Store extracted items for display
+    window._receiptItems = data.items || [];
+
     // Fill form
     document.getElementById('receipt-vendor').value = data.vendor || '';
     document.getElementById('receipt-amount').value = data.amount || '';
@@ -7062,6 +7067,20 @@ async function processReceipt() {
     }
     document.getElementById('receipt-notes').value = data.notes || '';
     document.getElementById('receipt-extracted-msg').textContent = 'Details extracted — review and confirm.';
+
+    // Show line items if extracted
+    var itemsContainer = document.getElementById('receipt-items-list');
+    if (itemsContainer && window._receiptItems.length > 0) {
+      var itemsHtml = '<div style="font-size:12px;font-weight:600;margin-bottom:6px;color:var(--text-muted);">Line Items (' + window._receiptItems.length + ')</div>';
+      itemsHtml += '<div style="max-height:150px;overflow-y:auto;border:1px solid rgba(200,215,240,0.4);border-radius:8px;font-size:12px;">';
+      itemsHtml += '<table style="width:100%;border-collapse:collapse;"><thead><tr style="background:rgba(200,215,240,0.2);"><th style="padding:4px 8px;text-align:left;">Item</th><th style="padding:4px 8px;text-align:right;">Qty</th><th style="padding:4px 8px;text-align:right;">Price</th><th style="padding:4px 8px;text-align:right;">Total</th></tr></thead><tbody>';
+      window._receiptItems.forEach(function(item) {
+        itemsHtml += '<tr style="border-top:1px solid rgba(200,215,240,0.2);"><td style="padding:4px 8px;">' + (item.description || '') + '</td><td style="padding:4px 8px;text-align:right;">' + (item.qty || 1) + '</td><td style="padding:4px 8px;text-align:right;">$' + (parseFloat(item.unit_price) || 0).toFixed(2) + '</td><td style="padding:4px 8px;text-align:right;font-weight:600;">$' + (parseFloat(item.total) || 0).toFixed(2) + '</td></tr>';
+      });
+      itemsHtml += '</tbody></table></div>';
+      itemsContainer.innerHTML = itemsHtml;
+      itemsContainer.style.display = 'block';
+    }
 
     document.getElementById('receipt-step-3').style.display = 'none';
     document.getElementById('receipt-step-4').style.display = 'block';
@@ -7137,7 +7156,8 @@ function saveReceipt() {
     submitted_by: currentUser.email,
     notes: document.getElementById('receipt-notes').value,
     receipt_thumbnail: thumbnail,
-    receipt_url: receiptImageData, // In production this would be a Supabase Storage URL
+    receipt_url: receiptImageData,
+    items: window._receiptItems || [],
     created_at: new Date().toISOString(),
   };
 
@@ -7165,6 +7185,59 @@ function captureAnother() {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+}
+
+function viewCurrentReceipt() {
+  if (!receiptImageData) return;
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'receipt-image-view';
+  overlay.style.zIndex = '9999';
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+  overlay.innerHTML = '<div style="width:100%;height:100%;display:flex;flex-direction:column;background:#000;">' +
+    '<div style="display:flex;justify-content:flex-end;padding:12px 16px;flex-shrink:0;">' +
+      '<button onclick="document.getElementById(\'receipt-image-view\').remove()" style="background:rgba(255,255,255,0.2);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer;"><i class="fas fa-times"></i> Close</button>' +
+    '</div>' +
+    '<div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:12px;">' +
+      '<img src="' + receiptImageData + '" style="max-width:100%;max-height:100%;object-fit:contain;">' +
+    '</div>' +
+  '</div>';
+  document.body.appendChild(overlay);
+}
+
+function viewExpenseReceipt(expenseId) {
+  var expense = DEMO_EXPENSES.find(function(e) { return e.id === expenseId; });
+  if (!expense) return;
+  var imgSrc = expense.receipt_url || expense.receipt_thumbnail;
+  var items = expense.items || [];
+
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'expense-receipt-view';
+  overlay.style.zIndex = '9999';
+
+  var itemsHtml = '';
+  if (items.length > 0) {
+    itemsHtml = '<div style="padding:12px 16px;background:rgba(255,255,255,0.95);border-top:1px solid var(--card-border);max-height:200px;overflow-y:auto;">' +
+      '<div style="font-size:12px;font-weight:600;margin-bottom:6px;color:var(--navy);">Line Items (' + items.length + ')</div>' +
+      '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+    items.forEach(function(item) {
+      itemsHtml += '<tr style="border-top:1px solid rgba(200,215,240,0.3);"><td style="padding:3px 0;">' + (item.description || '') + '</td><td style="padding:3px 8px;text-align:right;white-space:nowrap;">' + (item.qty || 1) + ' x $' + (parseFloat(item.unit_price) || 0).toFixed(2) + '</td><td style="padding:3px 0;text-align:right;font-weight:600;white-space:nowrap;">$' + (parseFloat(item.total) || 0).toFixed(2) + '</td></tr>';
+    });
+    itemsHtml += '</table></div>';
+  }
+
+  overlay.innerHTML = '<div style="width:100%;height:100%;display:flex;flex-direction:column;background:#000;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;flex-shrink:0;">' +
+      '<div style="color:#fff;font-size:14px;"><strong>' + expense.vendor + '</strong> — ' + formatCAD(expense.amount) + ' — ' + expense.expense_date + '<span style="margin-left:8px;font-size:11px;opacity:0.6;">' + (expense.category || '') + '</span></div>' +
+      '<button onclick="document.getElementById(\'expense-receipt-view\').remove()" style="background:rgba(255,255,255,0.2);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer;"><i class="fas fa-times"></i> Close</button>' +
+    '</div>' +
+    (imgSrc ? '<div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:12px;"><img src="' + imgSrc + '" style="max-width:100%;max-height:100%;object-fit:contain;"></div>' : '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:16px;">No receipt image</div>') +
+    itemsHtml +
+  '</div>';
+
+  overlay.querySelector('div').onclick = function(e) { if (e.target === overlay.querySelector('div')) overlay.remove(); };
+  document.body.appendChild(overlay);
 }
 
 function closeReceiptModal() {
