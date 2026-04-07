@@ -1201,25 +1201,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Check for existing Supabase session — keeps you logged in on refresh
-  if (sbClient) {
+  function checkSession() {
+    if (!sbClient) {
+      // Retry init if CDN loaded late
+      initSupabase();
+    }
+    if (!sbClient) {
+      console.warn('Supabase not available, retrying in 500ms...');
+      setTimeout(checkSession, 500);
+      return;
+    }
     sbClient.auth.getSession().then(({ data: { session } }) => {
       if (session && session.user) {
+        console.log('Session found for:', session.user.email);
         sbClient.from('profiles').select('*').eq('id', session.user.id).single().then(({ data: profile }) => {
           if (profile) {
             currentUser = profile;
             enterApp();
+          } else {
+            // Profile not found but session exists — use basic info
+            currentUser = { id: session.user.id, email: session.user.email, full_name: session.user.email.split('@')[0], role: 'admin', avatar_initials: session.user.email.substring(0, 2).toUpperCase() };
+            enterApp();
           }
         }).catch(err => {
           console.warn('Profile fetch failed:', err);
-          // Still try to enter with basic user info
           currentUser = { id: session.user.id, email: session.user.email, full_name: session.user.email.split('@')[0], role: 'admin', avatar_initials: session.user.email.substring(0, 2).toUpperCase() };
           enterApp();
         });
+      } else {
+        console.log('No active session');
       }
     }).catch(err => {
       console.warn('Session check failed:', err);
     });
   }
+  checkSession();
 });
 
 // ============================================
