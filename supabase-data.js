@@ -110,35 +110,42 @@ async function loadExpenses() {
 }
 
 async function saveExpense(expense) {
-  if (!sb()) return;
+  if (!sb()) { console.warn('saveExpense: no Supabase client'); return; }
 
-  // Don't save demo project IDs that aren't real UUIDs
   var projId = expense.project_id;
   var isRealUUID = projId && projId.length > 30 && projId.includes('-');
+  var userId = currentUser && currentUser.id && currentUser.id.length > 30 ? currentUser.id : null;
 
   const row = {
-    project_id: isRealUUID ? projId : null,
     vendor: expense.vendor,
     amount: expense.amount,
     category: expense.category,
-    expense_date: expense.expense_date,
+    expense_date: expense.expense_date || null,
     receipt_url: expense.receipt_url && expense.receipt_url.startsWith('http') ? expense.receipt_url : null,
     notes: (projId === 'trivex-corp' ? '[TRIVEX-CORP] ' : '') + (projId && !isRealUUID ? '[Project:' + projId + '] ' : '') + (expense.notes || ''),
-    submitted_by: currentUser && currentUser.id && currentUser.id.length > 30 ? currentUser.id : null,
   };
+
+  // Only add project_id if it's a real UUID (FK constraint)
+  if (isRealUUID) row.project_id = projId;
+  // Only add submitted_by if it's a real UUID
+  if (userId) row.submitted_by = userId;
+
+  console.log('saveExpense: attempting insert', JSON.stringify(row));
 
   try {
     const { data, error } = await sb().from('expenses').insert(row).select().single();
     if (error) {
-      console.error('Expense save error:', error);
+      console.error('saveExpense ERROR:', JSON.stringify(error));
+      alert('Failed to save expense: ' + (error.message || error.details || 'Unknown error'));
       return;
     }
     if (data) {
       expense.id = data.id;
-      console.log('Expense saved to Supabase:', data.id);
+      console.log('saveExpense SUCCESS:', data.id);
     }
   } catch (err) {
-    console.error('Expense save failed:', err);
+    console.error('saveExpense EXCEPTION:', err);
+    alert('Failed to save expense: ' + err.message);
   }
 }
 
