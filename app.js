@@ -6844,16 +6844,16 @@ function openReceiptCapture() {
       <div id="receipt-step-1">
         <p class="text-muted" style="font-size:13px;margin-bottom:16px;">Take a photo of the receipt or select from your camera roll.</p>
         <input type="file" id="receipt-file-input" accept="image/*" capture="environment" style="display:none;" onchange="handleReceiptFile(this)">
-        <input type="file" id="receipt-pdf-input" style="display:none;" onchange="handleReceiptFile(this)">
         <button class="receipt-capture-btn" onclick="document.getElementById('receipt-file-input').click()" style="margin-bottom:12px;">
           <i class="fas fa-camera"></i> Take Photo
         </button>
         <button class="btn btn-outline btn-full" onclick="document.getElementById('receipt-file-input').removeAttribute('capture'); document.getElementById('receipt-file-input').click()">
           <i class="fas fa-image"></i> Choose from Gallery
         </button>
-        <button class="btn btn-outline btn-full" onclick="document.getElementById('receipt-pdf-input').click()">
-          <i class="fas fa-file-pdf"></i> Upload PDF Invoice
-        </button>
+        <label class="btn btn-outline btn-full" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <i class="fas fa-file-pdf" style="margin-right:6px;"></i> Upload PDF / File
+          <input type="file" style="display:none;" onchange="handleReceiptFile(this)">
+        </label>
       </div>
 
       <!-- STEP 2: Preview -->
