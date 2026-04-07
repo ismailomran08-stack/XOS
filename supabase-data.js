@@ -122,7 +122,7 @@ async function saveExpense(expense) {
     amount: expense.amount,
     category: expense.category,
     expense_date: expense.expense_date,
-    receipt_url: null, // Don't store base64 in DB — too large
+    receipt_url: expense.receipt_url && expense.receipt_url.startsWith('http') ? expense.receipt_url : null,
     notes: (projId === 'trivex-corp' ? '[TRIVEX-CORP] ' : '') + (projId && !isRealUUID ? '[Project:' + projId + '] ' : '') + (expense.notes || ''),
     submitted_by: currentUser && currentUser.id && currentUser.id.length > 30 ? currentUser.id : null,
   };

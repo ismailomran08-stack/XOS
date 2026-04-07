@@ -7196,8 +7196,41 @@ function saveReceipt() {
 
   DEMO_EXPENSES.unshift(expense);
 
-  // Save to Supabase
-  if (typeof saveExpense === 'function') saveExpense(expense);
+  // Save to Supabase — upload image first, then save expense
+  if (typeof saveExpense === 'function' && sbClient) {
+    (async function() {
+      try {
+        // Upload receipt image to Supabase Storage
+        if (receiptImageData) {
+          var base64Data = receiptImageData.split(',')[1];
+          if (base64Data) {
+            var byteChars = atob(base64Data);
+            var byteArray = new Uint8Array(byteChars.length);
+            for (var i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
+            var mimeType = receiptMediaType || 'image/jpeg';
+            var ext = mimeType === 'application/pdf' ? 'pdf' : mimeType === 'image/png' ? 'png' : 'jpg';
+            var blob = new Blob([byteArray], { type: mimeType });
+            var filePath = 'receipts/' + Date.now() + '-' + vendor.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20) + '.' + ext;
+
+            var { data: uploadData, error: uploadErr } = await sbClient.storage.from('receipts').upload(filePath, blob, { contentType: mimeType, upsert: false });
+            if (uploadErr) {
+              console.error('Receipt image upload error:', uploadErr);
+            } else {
+              var { data: urlData } = sbClient.storage.from('receipts').getPublicUrl(filePath);
+              if (urlData && urlData.publicUrl) {
+                expense.receipt_url = urlData.publicUrl;
+                console.log('Receipt image uploaded:', urlData.publicUrl);
+              }
+            }
+          }
+        }
+        saveExpense(expense);
+      } catch (err) {
+        console.error('Receipt save error:', err);
+        saveExpense(expense); // Save without image if upload fails
+      }
+    })();
+  }
 
   const proj = DEMO_PROJECTS.find(p => p.id === projectId);
   document.getElementById('receipt-saved-detail').textContent =
