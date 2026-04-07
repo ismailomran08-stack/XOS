@@ -12,7 +12,8 @@ function sb() {
 // LOAD ALL DATA ON LOGIN
 // ============================================
 async function loadAllData() {
-  if (!sb()) return;
+  if (!sb()) { console.warn('loadAllData: no sb client'); return; }
+  console.log('loadAllData: starting for user ' + (currentUser ? currentUser.email : 'unknown'));
   try {
     await Promise.all([
       loadProjects(),
@@ -80,7 +81,9 @@ async function updateProjectField(projectId, field, value) {
 // EXPENSES
 // ============================================
 async function loadExpenses() {
+  console.log('loadExpenses: starting...');
   const { data, error } = await sb().from('expenses').select('*').order('created_at', { ascending: false });
+  console.log('loadExpenses: data=' + (data ? data.length : 'null') + ', error=' + (error ? JSON.stringify(error) : 'none'));
   if (error) { console.error('Load expenses error:', error); return; }
   if (data && data.length > 0) {
     // Merge Supabase data with demo data instead of replacing

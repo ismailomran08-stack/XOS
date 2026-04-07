@@ -1245,12 +1245,16 @@ document.addEventListener('DOMContentLoaded', () => {
 async function enterApp() {
   // Only load from Supabase if user authenticated via Supabase (has a real UUID, not an email as ID)
   var isSupabaseUser = currentUser && currentUser.id && currentUser.id.length > 30;
+  console.log('enterApp: isSupabaseUser=' + isSupabaseUser + ', id=' + (currentUser ? currentUser.id : 'null') + ', idLen=' + (currentUser && currentUser.id ? currentUser.id.length : 0));
   if (isSupabaseUser && typeof loadAllData === 'function' && sbClient) {
     try {
       await loadAllData();
+      console.log('enterApp: loadAllData complete, expenses count=' + DEMO_EXPENSES.length);
     } catch (err) {
       console.warn('Failed to load Supabase data, using demo data:', err);
     }
+  } else {
+    console.log('enterApp: skipping Supabase load');
   }
 
   document.getElementById('login-screen').style.display = 'none';
