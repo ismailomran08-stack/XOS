@@ -6853,7 +6853,7 @@ function openReceiptCapture() {
         </label>
         <label class="btn btn-outline btn-full" style="cursor:pointer;display:flex;align-items:center;justify-content:center;">
           <i class="fas fa-file-pdf" style="margin-right:6px;"></i> Upload PDF / File
-          <input type="file" accept="*" style="display:none;" onchange="handleReceiptFile(this)">
+          <input type="file" style="position:absolute;opacity:0;width:1px;height:1px;" onchange="handleReceiptFile(this)">
         </label>
       </div>
 
