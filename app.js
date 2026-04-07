@@ -6843,12 +6843,15 @@ function openReceiptCapture() {
       <!-- STEP 1: Camera / file picker -->
       <div id="receipt-step-1">
         <p class="text-muted" style="font-size:13px;margin-bottom:16px;">Take a photo of the receipt or select from your camera roll.</p>
-        <input type="file" id="receipt-file-input" accept="image/*" capture="environment" style="display:none;" onchange="handleReceiptFile(this)">
+        <input type="file" id="receipt-file-input" accept="image/*,application/pdf" capture="environment" style="display:none;" onchange="handleReceiptFile(this)">
         <button class="receipt-capture-btn" onclick="document.getElementById('receipt-file-input').click()" style="margin-bottom:12px;">
           <i class="fas fa-camera"></i> Take Photo
         </button>
         <button class="btn btn-outline btn-full" onclick="document.getElementById('receipt-file-input').removeAttribute('capture'); document.getElementById('receipt-file-input').click()">
           <i class="fas fa-image"></i> Choose from Gallery
+        </button>
+        <button class="btn btn-outline btn-full" onclick="document.getElementById('receipt-file-input').removeAttribute('capture'); document.getElementById('receipt-file-input').accept='application/pdf,image/*'; document.getElementById('receipt-file-input').click()">
+          <i class="fas fa-file-pdf"></i> Upload PDF Invoice
         </button>
       </div>
 
@@ -6960,7 +6963,30 @@ function handleReceiptFile(input) {
 
   // Detect media type
   receiptMediaType = file.type || 'image/jpeg';
-  // Convert HEIC to jpeg label (browser converts on read anyway)
+
+  // Handle PDF files
+  if (receiptMediaType === 'application/pdf') {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      receiptImageData = e.target.result;
+      // Show PDF icon as preview
+      document.getElementById('receipt-preview').src = '';
+      document.getElementById('receipt-preview').style.display = 'none';
+      var pdfPreview = document.createElement('div');
+      pdfPreview.id = 'receipt-pdf-preview';
+      pdfPreview.style.cssText = 'width:100%;height:240px;background:linear-gradient(135deg,#1a2744,#2d3f62);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;margin-bottom:16px;';
+      pdfPreview.innerHTML = '<i class="fas fa-file-pdf" style="font-size:48px;opacity:0.5;margin-bottom:12px;"></i><div style="font-size:14px;font-weight:600;">' + file.name + '</div><div style="font-size:12px;opacity:0.5;">' + (file.size > 1048576 ? (file.size/1048576).toFixed(1) + ' MB' : Math.round(file.size/1024) + ' KB') + '</div>';
+      var previewImg = document.getElementById('receipt-preview');
+      previewImg.parentNode.insertBefore(pdfPreview, previewImg);
+      document.getElementById('receipt-step-1').style.display = 'none';
+      document.getElementById('receipt-step-2').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    input.setAttribute('capture', 'environment');
+    return;
+  }
+
+  // Convert HEIC to jpeg label
   if (receiptMediaType === 'image/heic' || receiptMediaType === 'image/heif') {
     receiptMediaType = 'image/jpeg';
   }
@@ -6968,7 +6994,12 @@ function handleReceiptFile(input) {
   const reader = new FileReader();
   reader.onload = (e) => {
     receiptImageData = e.target.result;
-    document.getElementById('receipt-preview').src = receiptImageData;
+    // Remove any PDF preview if it existed
+    var pdfPrev = document.getElementById('receipt-pdf-preview');
+    if (pdfPrev) pdfPrev.remove();
+    var previewImg = document.getElementById('receipt-preview');
+    previewImg.style.display = '';
+    previewImg.src = receiptImageData;
     document.getElementById('receipt-step-1').style.display = 'none';
     document.getElementById('receipt-step-2').style.display = 'block';
   };
@@ -7021,15 +7052,17 @@ async function processReceipt() {
   document.getElementById('receipt-step-3').style.display = 'block';
 
   try {
-    // Compress image before sending — resize to max 1600px wide
+    // Compress image before sending (skip for PDFs)
     let base64ToSend = receiptImageData;
     let mediaTypeToSend = receiptMediaType;
-    try {
-      const compressed = await compressReceiptImage(receiptImageData, 1600);
-      base64ToSend = compressed;
-      mediaTypeToSend = 'image/jpeg'; // canvas always outputs jpeg
-    } catch (compErr) {
-      console.warn('Compression failed, sending original:', compErr);
+    if (receiptMediaType !== 'application/pdf') {
+      try {
+        const compressed = await compressReceiptImage(receiptImageData, 1600);
+        base64ToSend = compressed;
+        mediaTypeToSend = 'image/jpeg';
+      } catch (compErr) {
+        console.warn('Compression failed, sending original:', compErr);
+      }
     }
 
     // Strip data URI prefix

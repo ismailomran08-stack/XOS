@@ -31,10 +31,11 @@ app.post('/api/receipt-ocr', async (req, res) => {
     if (image.startsWith('iVBOR')) detectedType = 'image/png';
     else if (image.startsWith('R0lGO')) detectedType = 'image/gif';
     else if (image.startsWith('UklGR')) detectedType = 'image/webp';
+    else if (image.startsWith('JVBER')) detectedType = 'application/pdf';
   }
 
   // Validate it's actual base64 (no data URI prefix)
-  const cleanBase64 = image.replace(/^data:image\/[^;]+;base64,/, '');
+  const cleanBase64 = image.replace(/^data:[^;]+;base64,/, '');
 
   console.log('Receipt OCR: media_type=' + detectedType + ', base64_length=' + cleanBase64.length);
 
@@ -45,7 +46,14 @@ app.post('/api/receipt-ocr', async (req, res) => {
       messages: [{
         role: 'user',
         content: [
-          {
+          detectedType === 'application/pdf' ? {
+            type: 'document',
+            source: {
+              type: 'base64',
+              media_type: 'application/pdf',
+              data: cleanBase64,
+            },
+          } : {
             type: 'image',
             source: {
               type: 'base64',
